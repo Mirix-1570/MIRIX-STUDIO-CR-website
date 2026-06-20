@@ -45,41 +45,11 @@ export default function Navbar({
             onClick={() => setCurrentTab('home')}
             className="flex items-center space-x-3 group text-left cursor-pointer"
           >
-            {/* Minimal SVG Graphic Logo mirroring the prompt image */}
-            <div className="relative w-12 h-12 flex items-center justify-center bg-black rounded-full overflow-visible border border-zinc-900 shadow-sm">
-              <svg viewBox="0 0 100 100" className="w-10 h-10 select-none">
-                {/* Arc Text: MIRIX STUDIO CR */}
-                <path
-                  id="curve"
-                  d="M 12 50 A 38 38 0 0 1 88 50"
-                  fill="transparent"
-                />
-                <text className="font-sans font-bold text-[8.5px] tracking-[0.11em] fill-white uppercase">
-                  <textPath href="#curve" startOffset="50%" textAnchor="middle">
-                    MIRIX STUDIO
-                  </textPath>
-                </text>
-                
-                {/* Handwriting stylized letter M */}
-                <text
-                  x="50%"
-                  y="68%"
-                  textAnchor="middle"
-                  className="font-serif italic font-bold text-3xl fill-white"
-                  style={{ fontFamily: 'Georgia, serif' }}
-                >
-                  M
-                </text>
-              </svg>
-            </div>
-            <div>
-              <span className="block font-sans font-extrabold tracking-[0.25em] text-sm uppercase text-black group-hover:text-zinc-600 transition-colors">
-                MIRIX STUDIO
-              </span>
-              <span className="block font-sans font-medium text-[9px] tracking-[0.4em] text-zinc-500 uppercase">
-                COSTA RICA
-              </span>
-            </div>
+            <img
+              src="/logo.png"
+              alt="Mirix Studio CR Logo"
+              className="h-12 w-auto object-contain"
+            />
           </button>
 
           {/* Desktop Navigation */}

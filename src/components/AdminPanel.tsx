@@ -79,7 +79,7 @@ export default function AdminPanel({
   const [portCategory, setPortCategory] = useState('Fotografía Professional');
   const [portDesc, setPortDesc] = useState('');
   const [portMediaUrl, setPortMediaUrl] = useState('');
-  const [portAspect, setPortAspect] = useState<'square' | 'portrait' | 'video'>('square');
+  const [portAspect, setPortAspect] = useState<'square' | 'portrait' | 'video' | 'landscape'>('square');
   const [portEmbed, setPortEmbed] = useState('');
 
   // Biography settings states

@@ -185,7 +185,7 @@ export default function Hero({ setCurrentTab, biography }: HeroProps) {
             className="flex items-center space-x-1.5 text-zinc-600 hover:text-black transition-colors"
           >
             <Facebook className="w-4 h-4" />
-            <span className="text-xs font-mono">{biography.facebook}</span>
+            <span className="text-xs font-mono">{biography.facebookUrl}</span>
           </a>
           <a
             href={`mailto:${biography.email}`}

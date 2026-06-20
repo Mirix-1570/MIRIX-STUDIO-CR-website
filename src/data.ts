@@ -15,7 +15,7 @@ Durante mi trayecto en el colegio, no sabía ni qué estudiar al salir, hasta qu
   whatsapp: "+506 63105876",
   email: "mirixstudiocr@gmail.com",
   facebook: "Mirix Studio CR",
-  facebookUrl: "https://www.facebook.com/profile.php?id=61560948967916", // Beautiful direct link format
+  facebookUrl: "https://www.facebook.com/share/19DWfWjiKi/", // Mirix Studio CR Facebook page
   instagram: "mirix_studio.cr",
   instagramUrl: "https://www.instagram.com/mirix_studio.cr/",
 };
