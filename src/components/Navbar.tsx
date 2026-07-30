@@ -46,7 +46,7 @@ export default function Navbar({
             className="flex items-center space-x-3 group text-left cursor-pointer"
           >
             <img
-              src="/logo.png"
+              src="/Diseno sin título (1).png"
               alt="Mirix Studio CR Logo"
               className="h-12 w-auto object-contain"
             />
