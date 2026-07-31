@@ -171,7 +171,7 @@ export default function Portfolio({ portfolioItems, setCurrentTab }: PortfolioPr
             <span className="text-xs font-mono tracking-[0.25em] text-zinc-500 uppercase block">¿Listo para transformar tu presencia visual?</span>
             
             <h3 className="text-3xl sm:text-4xl font-serif font-light tracking-tight uppercase leading-none text-neutral-950">
-              Llevemos la estética de tu marca al próximo nivel
+              Llevemos la estética y estilo de tu marca al próximo nivel
             </h3>
             
             <p className="text-zinc-600 font-sans font-light text-sm sm:text-base leading-relaxed">
