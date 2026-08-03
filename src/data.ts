@@ -76,67 +76,78 @@ export const INITIAL_PORTFOLIO: PortfolioItem[] = [
   {
     id: "port-1",
     type: "photo",
-    title: "Estructuras & Sombras",
-    category: "Arquitectura",
-    description: "Estudio geométrico del concreto y las perspectivas lineales bajo un sol de mediodía costarricense.",
-    mediaUrl: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1000",
-    aspect: "landscape"
+    title: "Fotografía Artística",
+    category: "Naturaleza",
+    description: "Captura de la creación de Dios y sus obras.",
+    mediaUrl: "/FB_IMG_1741379727264.jpg",
+    aspect: "landscape",
+    links: [
+      { url: "https://photos.app.goo.gl/mzCsNbhYmg5gMy8C8", label: "Ver Portfolio" }
+    ]
   },
   {
     id: "port-2",
     type: "photo",
-    title: "Retrato en Claroscuro",
-    category: "Fotografía de Retrato",
-    description: "Captura íntima jugando con luces incidentes y sombras pronunciadas en estudio.",
-    mediaUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=1000",
-    aspect: "portrait"
+    title: "Retratos en Estudio",
+    category: "Producciones Vega",
+    description: "Fotos jugando con luces incidentes y sombras en estudio o lugar de trabajo.",
+    mediaUrl: "/FB_IMG_1755032448510.jpg",
+    aspect: "portrait",
+    links: [
+      { url: "https://photos.app.goo.gl/26wUQZG7JYmj5VoJ8", label: "Ver Portfolio" }
+    ]
   },
   {
     id: "port-3",
     type: "photo",
-    title: "Diseño Interior Orgánico",
-    category: "Diseño Interior",
-    description: "Composición de textiles, maderas crudas y plantas en un espacio minimalista contemporáneo.",
-    mediaUrl: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1000",
-    aspect: "square"
+    title: "Recursos Visuales para Diseño",
+    category: "Acontecer Espartano Y Algo Más",
+    description: "Fotografía de objetos y productos para su uso en diseño gráfico, publicidad y marketing digital.",
+    mediaUrl: "/IMG-20260123-WA0140.jpg",
+    aspect: "square",
+    links: [
+      { url: "https://photos.app.goo.gl/HarFx2vejSWXN3Gw5", label: "Ver Portfolio" },
+      { url: "https://www.canva.com/folder/FAHDvzQN2EM", label: "Ver Diseños" }
+    ]
   },
   {
     id: "port-4",
     type: "video",
-    title: "Llum: Cortometraje del Atardecer",
-    category: "Cine / Video",
-    description: "Cortometraje experimental centrado en las tonalidades de luz dorada en las costas del golfo de Nicoya.",
-    mediaUrl: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&q=80&w=1000",
+    title: "Grabación de Video Comercial",
+    category: "Mirix Studio CR + Producciones Vega",
+    description: "Video Comercial para promocionar Producciones Vega y sus servicios de fotografía y video profesional.",
+    mediaUrl: "/FB_IMG_1755032417111.jpg",
     aspect: "video",
-    embedUrl: "https://player.vimeo.com/external/371433846.sd.mp4?s=236da2f3c05427382c201cab29656b2c4e9ec030&profile_id=139&oauth2_token_id=57447761" // Dynamic high-quality safe video file
-  },
-  {
-    id: "port-5",
-    type: "video",
-    title: "Estilo & Ritmo en Redes",
-    category: "Social Reels",
-    description: "Muestra de transiciones rápidas y estética visual moderna creada para marcas de café local.",
-    mediaUrl: "https://images.unsplash.com/photo-1527689368864-3a821dbccc34?auto=format&fit=crop&q=80&w=1000",
-    aspect: "video",
-    embedUrl: "https://player.vimeo.com/external/435674703.sd.mp4?s=7f32e315afda1afaf98695029e2467d1f4d9a449&profile_id=139&oauth2_token_id=57447761" // Creative studio shoot video loop
+    embedUrl: "/VID-20250409-WA0019.mp4", // Local video file from public folder
+    links: [
+      { url: "https://photos.app.goo.gl/26wUQZG7JYmj5VoJ8", label: "Ver Portfolio" }
+    ]
   },
   {
     id: "port-6",
     type: "photo",
-    title: "Desarrollo Web Auténtico",
-    category: "Desarrollo Web",
-    description: "Interfaces webs minimalistas construidas con animaciones fluidas y accesibilidad extrema.",
-    mediaUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1000",
-    aspect: "landscape"
+    title: "Fotografía Gatronómica",
+    category: "Pa'Pikar Colombia",
+    description: "Fotografía de alimentos y bebidas en un estilo artístico y delicioso.",
+    mediaUrl: "/IMG-20260226-WA0053.jpg",
+    aspect: "landscape",
+    links: [
+      { url: "https://photos.app.goo.gl/yxMjThrZM4UsJPtw5", label: "Ver Portfolio" },
+      { url: "https://www.canva.com/folder/FAHDv4F1sEQ", label: "Ver Diseños" }
+    ]
   },
   {
     id: "port-7",
     type: "photo",
-    title: "Siluetas de Puntarenas",
-    category: "Fotografía de Calle",
-    description: "Estudio de las personas moviéndose frente al mar en una tarde de brisa salada.",
-    mediaUrl: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1000",
-    aspect: "portrait"
+    title: "Redes Sociales y Marketing Digital",
+    category: "Inovatry Solutions",
+    description: "Diseño de contenido visual para redes sociales y estrategias de marketing digital.",
+    mediaUrl: "/IMG-20260731-WA0015.jpg",
+    aspect: "portrait",
+    links: [
+      { url: "https://photos.app.goo.gl/G75uh8wSekZLHr3x8", label: "Ver Portfolio" },
+      { url: "https://www.canva.com/folder/FAHHbr31hlk", label: "Ver Diseños" }
+    ]
   }
 ];
 

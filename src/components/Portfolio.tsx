@@ -87,17 +87,12 @@ export default function Portfolio({ portfolioItems, setCurrentTab }: PortfolioPr
         {/* Dynamic Grid Layout */}
         <motion.div
           layout
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[250px] md:auto-rows-[300px]"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           <AnimatePresence mode="popLayout">
             {filteredItems.map((item) => {
-              // Custom span based on layout preference (aspect)
-              let gridClasses = "relative group overflow-hidden border border-neutral-250 bg-white rounded-none cursor-pointer shadow-sm";
-              if (item.aspect === 'landscape') {
-                gridClasses += " sm:col-span-2";
-              } else if (item.aspect === 'portrait') {
-                gridClasses += " row-span-2";
-              }
+              // Uniform 1:1 square aspect ratio for all items
+              const gridClasses = "relative group overflow-hidden border border-neutral-250 bg-white rounded-none cursor-pointer shadow-sm aspect-square";
 
               return (
                 <motion.div
@@ -260,6 +255,26 @@ export default function Portfolio({ portfolioItems, setCurrentTab }: PortfolioPr
                   <p className="text-sm text-zinc-650 font-light font-sans leading-relaxed">
                     {selectedItem.description}
                   </p>
+
+                  {/* Visible clickable links */}
+                  {selectedItem.links && selectedItem.links.length > 0 && (
+                    <div className="flex flex-col gap-2 pt-2">
+                      {selectedItem.links.map((link, idx) => (
+                        <a
+                          key={idx}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between gap-2 px-4 py-3 bg-white border border-neutral-200 rounded-none hover:border-black hover:bg-neutral-50 transition-colors text-zinc-900 group/link"
+                        >
+                          <span className="text-xs font-sans font-semibold tracking-wider uppercase">
+                            {link.label}
+                          </span>
+                          <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="pt-8 space-y-4 mt-auto">

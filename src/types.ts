@@ -12,6 +12,7 @@ export interface PortfolioItem {
   mediaUrl: string;
   aspect: 'square' | 'portrait' | 'video' | 'landscape';
   embedUrl?: string; // Optional YouTube/Vimeo embed or HTML5 mock video source
+  links?: { url: string; label: string }[]; // Visible clickable links in modal
 }
 
 export interface ServicePlan {
