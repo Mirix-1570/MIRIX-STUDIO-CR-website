@@ -130,7 +130,7 @@ export default function Hero({ setCurrentTab, biography }: HeroProps) {
           >
             <div className="absolute inset-4 overflow-hidden rounded-none bg-neutral-900 group">
               <img
-                src="./public/IMG_20250209_135527-EFFECTS.jpg"
+                src="/IMG_20250209_135527-EFFECTS.jpg"
                 alt="Creative photography camera and lighting setup"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover object-center grayscale opacity-75 group-hover:scale-105 transition-transform duration-[4000ms] ease-out select-none"
