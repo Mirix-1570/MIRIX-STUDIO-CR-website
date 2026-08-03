@@ -2,5 +2,5 @@
   "name": "Mirix Studio CR",
   "description": "Plataforma web minimalista y portafolio audiovisual interactivo para Mirix Studio CR, presentando servicios de video, fotografía, tienda de dropshipping y desarrollo web.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": []
 }
