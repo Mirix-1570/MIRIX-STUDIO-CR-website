@@ -69,7 +69,7 @@ export default function About({ biography }: AboutProps) {
               <div className="absolute inset-3 overflow-hidden rounded-none bg-neutral-905 relative">
                 {/* Visual Representation of Miranda */}
                 <img
-                  src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=800"
+                  src="./IMG_20260324_202843.jpg"
                   alt="Miranda Méndez - President & Creator of Mirix Studio CR"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover grayscale brightness-95 hover:scale-105 transition-transform duration-1000 select-none"
@@ -163,7 +163,7 @@ export default function About({ biography }: AboutProps) {
                   <span className="text-xs font-semibold tracking-wider text-zinc-950 uppercase">EL PROPÓSITO celestial</span>
                 </div>
                 <p className="text-xs text-zinc-650 font-light font-sans leading-relaxed">
-                  Mirix Studio no es solo un negocio; es una manifestación del caminar junto a Dios y de materializar talentos para aportar valor concreto en la sociedad.
+                  Mirix Studio no es solo un negocio; es el fruto de mi caminar junto a Dios y de materializar talentos para aportar valor concreto en la sociedad.
                 </p>
               </motion.div>
             </div>
