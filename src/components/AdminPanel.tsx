@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Lock, Unlock, LogOut, Settings, Plus, Trash2, Edit2, CheckCircle, Eye,
-  LayoutDashboard, ShoppingBag, FolderOpen, Mail, UserCheck, RefreshCw, Key, ArrowRight, UserPlus
+  LayoutDashboard, ShoppingBag, FolderOpen, Mail, UserCheck, UserPlus, RefreshCw, Key, ArrowRight
 } from 'lucide-react';
 import { ServicePlan, ShopProduct, PortfolioItem, ContactMessage } from '../types';
 
