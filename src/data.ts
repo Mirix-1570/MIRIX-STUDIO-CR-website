@@ -50,7 +50,7 @@ export const INITIAL_PLANS: ServicePlan[] = [
       "2 Videos promocionales cinematicos (30-60 seg, formato vertical/horizontal)",
       "Equipo profesional de iluminación portátil y micrófonos inalámbricos",
       "Dirección artística personalizada por Miranda",
-      "Entrega rápida vía Drive en un plazo máximo de 7 días"
+      "Entrega rápida vía Drive en un plazo máximo de 15 días"
     ]
   },
   {
@@ -59,15 +59,17 @@ export const INITIAL_PLANS: ServicePlan[] = [
     price: 280000,
     currency: "CRC",
     duration: "mensual/combo",
-    description: "La transformación digital total: Producción audiovisual premium combinada con el desarrollo de tu sitio web profesional.",
+    description: "La transformación digital total: Producción audiovisual premium combinada con gestión de redes sociales integral para un impacto visual y estratégico sin igual.",
     features: [
       "Todo lo incluido en el Plan Social y Producción Estándar",
-      "Diseño y Desarrollo de Sitio Web Portafolio Profesional",
-      "Integración de tienda online básica o catálogo interactivo",
-      "Formularios de contacto inteligentes con notificaciones",
+      "Catálogo de productos y servicios con fotografía profesional",
+      "Foto y video de eventos corporativos o personales (hasta 2 horas de cobertura)",
       "15 Reels de alta fidelidad mensuales en total",
-      "Sección prioritaria de fotografía corporativa o de marca personal",
-      "Soporte y mantenimiento web preferencial"
+      "Gestión completa de redes sociales con estrategia de marketing digital",
+      "Soporte prioritario y reuniones de seguimiento quincenales",
+      "Poscisionamiento de empresa en Google y Google Maps",
+      "Análisis de métricas y reportes mensuales de desempeño",
+      "Asesoría en branding y diseño gráfico para identidad visual"
     ]
   }
 ];
@@ -106,8 +108,7 @@ export const INITIAL_PORTFOLIO: PortfolioItem[] = [
     mediaUrl: "/IMG-20260123-WA0140.jpg",
     aspect: "square",
     links: [
-      { url: "https://photos.app.goo.gl/HarFx2vejSWXN3Gw5", label: "Ver Portfolio" },
-      { url: "https://www.canva.com/folder/FAHDvzQN2EM", label: "Ver Diseños" }
+      { url: "https://photos.app.goo.gl/HarFx2vejSWXN3Gw5", label: "Ver Portfolio" }
     ]
   },
   {
@@ -132,8 +133,7 @@ export const INITIAL_PORTFOLIO: PortfolioItem[] = [
     mediaUrl: "/IMG-20260226-WA0053.jpg",
     aspect: "landscape",
     links: [
-      { url: "https://photos.app.goo.gl/yxMjThrZM4UsJPtw5", label: "Ver Portfolio" },
-      { url: "https://www.canva.com/folder/FAHDv4F1sEQ", label: "Ver Diseños" }
+      { url: "https://photos.app.goo.gl/yxMjThrZM4UsJPtw5", label: "Ver Portfolio" }
     ]
   },
   {
@@ -145,8 +145,7 @@ export const INITIAL_PORTFOLIO: PortfolioItem[] = [
     mediaUrl: "/IMG-20260731-WA0015.jpg",
     aspect: "portrait",
     links: [
-      { url: "https://photos.app.goo.gl/G75uh8wSekZLHr3x8", label: "Ver Portfolio" },
-      { url: "https://www.canva.com/folder/FAHHbr31hlk", label: "Ver Diseños" }
+      { url: "https://photos.app.goo.gl/G75uh8wSekZLHr3x8", label: "Ver Portfolio" }
     ]
   }
 ];
