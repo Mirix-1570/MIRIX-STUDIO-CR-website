@@ -457,21 +457,12 @@ export default function AdminPanel({
               </div>
             )}
 
-            {/* Credential clues for tester */}
-            {authMode === 'login' && (
-              <div className="p-3.5 mb-5 bg-zinc-900 border border-zinc-800 rounded text-[11px] text-zinc-400 leading-relaxed font-sans">
-                <span className="block font-bold text-zinc-300">💡 Credenciales por Defecto para Pruebas:</span>
-                <span className="block mt-0.5">• Usuario: <strong className="text-white font-mono">admin</strong></span>
-                <span className="block">• Contraseña: <strong className="text-white font-mono">password</strong></span>
-              </div>
-            )}
-
             <form onSubmit={authMode === 'login' ? handleLoginSubmit : handleRegisterSubmit} className="space-y-4">
               <div>
                 <label className="text-[10px] font-semibold uppercase tracking-widest text-zinc-400 block mb-1">Nombre de Usuario</label>
                 <input
                   type="text"
-                  placeholder="Ej: admin"
+                  placeholder="Ej: nomeselaclave"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="w-full bg-zinc-950 border border-zinc-800 focus:border-white focus:outline-none p-3 text-sm text-white rounded-sm placeholder-zinc-700 font-sans transition-colors"
