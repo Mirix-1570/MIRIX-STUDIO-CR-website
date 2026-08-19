@@ -4,6 +4,17 @@
 @theme {
   --font-serif: "Playfair Display", Georgia, serif;
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Custom intermediate shades used across the site (between default steps) */
+  --color-zinc-350: #babac1;
+  --color-zinc-450: #898994;
+  --color-zinc-550: #62626b;
+  --color-zinc-650: #484850;
+  --color-zinc-850: #1f1f23;
+  --color-neutral-250: #dcdcdc;
+  --color-neutral-350: #bcbcbc;
+  --color-neutral-450: #8b8b8b;
+  --color-red-505: #e63535;
 }
 
 body {
