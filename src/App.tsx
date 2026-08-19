@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, ArrowRight, Video, Camera, Star, Code, Compass, ArrowUpRight, Instagram } from 'lucide-react';
 import Navbar from './components/Navbar';
@@ -16,8 +16,16 @@ import Shop from './components/Shop';
 import Contact from './components/Contact';
 import AdminPanel from './components/AdminPanel';
 import { adminLogout } from './lib/firebase';
+import {
+  FIRESTORE_CONFIGURED,
+  subscribeContent,
+  saveContent,
+  subscribeMessages,
+  addMessage,
+  deleteAllMessages
+} from './lib/firestore';
 import CartDrawer from './components/CartDrawer';
-import { PortfolioItem, ServicePlan, ShopProduct, ContactMessage } from './types';
+import { Bio, PortfolioItem, ServicePlan, ShopProduct, ContactMessage } from './types';
 import {
   INITIAL_BIOGRAPHY,
   INITIAL_PLANS,
@@ -30,78 +38,134 @@ import {
 export default function App() {
   const [currentTab, setCurrentTab] = useState<string>('home');
   const [cartOpen, setCartOpen] = useState(false);
-  
-  // STATE MANAGEMENT synced with localStorage
-  const [biography, setBiography] = useState(() => 
-    getSavedData('mirix_bio', INITIAL_BIOGRAPHY)
-  );
-  
-  const [plans, setPlans] = useState<ServicePlan[]>(() => 
-    getSavedData('mirix_plans', INITIAL_PLANS)
-  );
-  
-  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(() => 
-    getSavedData('mirix_portfolio', INITIAL_PORTFOLIO)
-  );
-  
-  const [products, setProducts] = useState<ShopProduct[]>(() => 
-    getSavedData('mirix_products', INITIAL_PRODUCTS)
-  );
 
-  const [messages, setMessages] = useState<ContactMessage[]>(() => 
-    getSavedData('mirix_messages', [
-      {
-        id: 'msg-seed-1',
-        name: 'Carlos Solano',
-        email: 'carlos@saborlocal.cr',
-        phone: '50688997766',
-        service: 'Producción de Video',
-        message: 'Hola Miranda, nos encanta tu portafolio cinematográfico de reels. Queremos coordinar una sesión audiovisual para nuestra cafetería de especialidad en Miramar de Puntarenas. ¿Tienes espacio disponible el próximo sábado para un rodaje de 3 horas?',
-        date: '19/06/2026, 09:30 AM',
-        read: false
-      }
-    ])
-  );
+  // STATE MANAGEMENT synced with Firestore (content) + localStorage (cart)
+  const [biography, setBiography] = useState<Bio>(INITIAL_BIOGRAPHY);
+  const [plans, setPlans] = useState<ServicePlan[]>(INITIAL_PLANS);
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(INITIAL_PORTFOLIO);
+  const [products, setProducts] = useState<ShopProduct[]>(INITIAL_PRODUCTS);
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
 
-  const [cart, setCart] = useState<{ product: ShopProduct; quantity: number }[]>(() => 
+  const [cart, setCart] = useState<{ product: ShopProduct; quantity: number }[]>(() =>
     getSavedData('mirix_cart', [])
   );
 
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
-  // PERSISTENCE TRIGGERS
+  // Refs mirroring current state so Firestore snapshot callbacks never close over stale values
+  const biographyRef = useRef(biography);
+  const plansRef = useRef(plans);
+  const portfolioItemsRef = useRef(portfolioItems);
+  const productsRef = useRef(products);
+  const isAdminLoggedInRef = useRef(isAdminLoggedIn);
+
+  useEffect(() => { biographyRef.current = biography; }, [biography]);
+  useEffect(() => { plansRef.current = plans; }, [plans]);
+  useEffect(() => { portfolioItemsRef.current = portfolioItems; }, [portfolioItems]);
+  useEffect(() => { productsRef.current = products; }, [products]);
+  useEffect(() => { isAdminLoggedInRef.current = isAdminLoggedIn; }, [isAdminLoggedIn]);
+
+  // FIRESTORE SUBSCRIPTIONS (mounted once). Content docs are public reads; when a doc
+  // is missing and the admin is signed in, auto-migrate the current state to Firestore.
   useEffect(() => {
-    saveData('mirix_bio', biography);
-  }, [biography]);
+    if (!FIRESTORE_CONFIGURED) return;
+
+    const unsubscribeBio = subscribeContent<Bio>('bio', (snapshot) => {
+      if (snapshot.exists) {
+        setBiography(snapshot.items[0] ?? INITIAL_BIOGRAPHY);
+      } else if (isAdminLoggedInRef.current) {
+        saveContent('bio', [biographyRef.current]);
+      }
+    });
+
+    const unsubscribePlans = subscribeContent<ServicePlan>('plans', (snapshot) => {
+      if (snapshot.exists) {
+        setPlans(snapshot.items);
+      } else if (isAdminLoggedInRef.current) {
+        saveContent('plans', plansRef.current);
+      }
+    });
+
+    const unsubscribePortfolio = subscribeContent<PortfolioItem>('portfolio', (snapshot) => {
+      if (snapshot.exists) {
+        setPortfolioItems(snapshot.items);
+      } else if (isAdminLoggedInRef.current) {
+        saveContent('portfolio', portfolioItemsRef.current);
+      }
+    });
+
+    const unsubscribeProducts = subscribeContent<ShopProduct>('products', (snapshot) => {
+      if (snapshot.exists) {
+        setProducts(snapshot.items);
+      } else if (isAdminLoggedInRef.current) {
+        saveContent('products', productsRef.current);
+      }
+    });
+
+    return () => {
+      unsubscribeBio();
+      unsubscribePlans();
+      unsubscribePortfolio();
+      unsubscribeProducts();
+    };
+  }, []);
+
+  // Messages are admin-only: subscribe while the admin is signed in
+  useEffect(() => {
+    if (!FIRESTORE_CONFIGURED || !isAdminLoggedIn) return;
+    const unsubscribe = subscribeMessages((msgs) => setMessages(msgs));
+    return unsubscribe;
+  }, [isAdminLoggedIn]);
+
+  // FIRESTORE PERSISTENCE TRIGGERS (admin writes only; visitors never write)
+  useEffect(() => {
+    if (FIRESTORE_CONFIGURED && isAdminLoggedIn) {
+      saveContent('bio', [biography]);
+    }
+  }, [biography, isAdminLoggedIn]);
 
   useEffect(() => {
-    saveData('mirix_plans', plans);
-  }, [plans]);
+    if (FIRESTORE_CONFIGURED && isAdminLoggedIn) {
+      saveContent('plans', plans);
+    }
+  }, [plans, isAdminLoggedIn]);
 
   useEffect(() => {
-    saveData('mirix_portfolio', portfolioItems);
-  }, [portfolioItems]);
+    if (FIRESTORE_CONFIGURED && isAdminLoggedIn) {
+      saveContent('portfolio', portfolioItems);
+    }
+  }, [portfolioItems, isAdminLoggedIn]);
 
   useEffect(() => {
-    saveData('mirix_products', products);
-  }, [products]);
+    if (FIRESTORE_CONFIGURED && isAdminLoggedIn) {
+      saveContent('products', products);
+    }
+  }, [products, isAdminLoggedIn]);
 
-  useEffect(() => {
-    saveData('mirix_messages', messages);
-  }, [messages]);
-
+  // CART persistence stays in localStorage (per-visitor session)
   useEffect(() => {
     saveData('mirix_cart', cart);
   }, [cart]);
 
   // MESSAGES DISPATCH
   const handleAddMessage = (payload: Omit<ContactMessage, 'id' | 'date' | 'read'>) => {
+    const createdAt = Date.now();
     const newMessage: ContactMessage = {
       ...payload,
-      id: `msg-${Date.now()}`,
+      id: `msg-${createdAt}`,
       date: new Date().toLocaleString('es-CR'),
+      createdAt,
       read: false
     };
+    if (FIRESTORE_CONFIGURED) {
+      addMessage({
+        ...payload,
+        date: newMessage.date,
+        createdAt,
+        read: false
+      });
+    }
+    // Optimistic local update so the admin inbox reflects the message instantly
     setMessages([newMessage, ...messages]);
   };
 
@@ -135,25 +199,35 @@ export default function App() {
 
   // REST RESET BUTTON SUPPORT
   const handleResetAllToDefaults = () => {
+    // One-time cleanup of legacy localStorage mirrors (content now lives in Firestore)
     localStorage.removeItem('mirix_bio');
     localStorage.removeItem('mirix_plans');
     localStorage.removeItem('mirix_portfolio');
     localStorage.removeItem('mirix_products');
     localStorage.removeItem('mirix_messages');
-    localStorage.removeItem('mirix_cart');
-    
+
     setBiography(INITIAL_BIOGRAPHY);
     setPlans(INITIAL_PLANS);
     setPortfolioItems(INITIAL_PORTFOLIO);
     setProducts(INITIAL_PRODUCTS);
     setMessages([]);
+
+    if (FIRESTORE_CONFIGURED) {
+      saveContent('bio', [INITIAL_BIOGRAPHY]);
+      saveContent('plans', INITIAL_PLANS);
+      saveContent('portfolio', INITIAL_PORTFOLIO);
+      saveContent('products', INITIAL_PRODUCTS);
+      deleteAllMessages();
+    }
+
+    localStorage.removeItem('mirix_cart');
     setCart([]);
     setIsAdminLoggedIn(false);
   };
 
   return (
     <div className="bg-[#FAFAFA] text-zinc-900 min-h-screen flex flex-col justify-between selection:bg-black selection:text-white">
-      
+
       {/* Top navigation */}
       <Navbar
         currentTab={currentTab}
@@ -177,11 +251,11 @@ export default function App() {
             {currentTab === 'home' && (
               <>
                 <Hero setCurrentTab={setCurrentTab} biography={biography} />
-                
+
                 {/* Immersive Swiss Grid Feature Highlights of our services categories */}
                 <section className="bg-white py-24 px-4 sm:px-6 lg:px-8 border-t border-black/10">
                   <div className="max-w-7xl mx-auto">
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                       {/* Grid Item 1 Video details list */}
                       <div className="p-8 bg-neutral-50 border border-neutral-200/80 rounded-none relative group hover:border-black transition-all duration-300">
@@ -250,7 +324,7 @@ export default function App() {
                       <p className="text-xs sm:text-sm text-zinc-500 font-sans font-light max-w-md mx-auto">
                         Creemos firmemente en el poder del minimalismo. El juego de luz y sombra evoca permanencia, elegancia y dirige toda la potencia compositiva hacia el sujeto y la emoción genuina.
                       </p>
-                      
+
                       <div className="pt-3">
                         <button
                           onClick={() => setCurrentTab('about')}

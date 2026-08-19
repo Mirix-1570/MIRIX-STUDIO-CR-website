@@ -611,7 +611,7 @@ MIRIX-STUDIO-CR-website/
 
 | Elemento | Estado | Recomendación |
 |---|---|---|
-| AdminPanel auth | ⚠️ localStorage | Migrar a auth real (JWT/Firebase) |
+| AdminPanel auth | ✅ Firebase Auth | Autenticación migrada a Firebase Auth; datos admin en Firestore |
 | Contraseña default | `admin/password` | Cambiar en producción |
 | `rel="noopener"` | ✅ Implementado | OK en links externos |
 | `referrerPolicy` | ✅ `no-referrer` | OK en imágenes |

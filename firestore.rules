@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'mirixstudiocr@gmail.com';
+    }
+    match /content/{domain} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /messages/{messageId} {
+      allow create: if request.resource.data.name is string
+        && request.resource.data.email is string
+        && request.resource.data.phone is string
+        && request.resource.data.service is string
+        && request.resource.data.message is string
+        && request.resource.data.date is string
+        && request.resource.data.createdAt is number;
+      allow read, update, delete, list: if isAdmin();
+    }
+  }
+}

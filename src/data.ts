@@ -203,7 +203,7 @@ export const INITIAL_PRODUCTS: ShopProduct[] = [
   }
 ];
 
-// Helper Functions to load state with falling backs
+// Helper Function to load state with fallbacks (used by the cart, which stays in localStorage)
 export function getSavedData<T>(key: string, defaultValue: T): T {
   try {
     const saved = localStorage.getItem(key);
@@ -214,6 +214,7 @@ export function getSavedData<T>(key: string, defaultValue: T): T {
   }
 }
 
+// Helper Function to persist state
 export function saveData<T>(key: string, data: T): void {
   try {
     localStorage.setItem(key, JSON.stringify(data));

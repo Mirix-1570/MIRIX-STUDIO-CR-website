@@ -8,7 +8,7 @@ import {
   Lock, Unlock, LogOut, Settings, Plus, Trash2, Edit2, CheckCircle, Eye,
   LayoutDashboard, ShoppingBag, FolderOpen, Mail, UserCheck, RefreshCw, Key, ArrowRight, EyeOff
 } from 'lucide-react';
-import { ServicePlan, ShopProduct, PortfolioItem, ContactMessage } from '../types';
+import { Bio, ServicePlan, ShopProduct, PortfolioItem, ContactMessage } from '../types';
 import { FIREBASE_CONFIGURED, ADMIN_EMAIL, adminLogin, adminLogout, onAdminAuthChange, mapAuthError } from '../lib/firebase';
 
 interface AdminPanelProps {
@@ -20,8 +20,8 @@ interface AdminPanelProps {
   setPortfolioItems: (items: PortfolioItem[]) => void;
   messages: ContactMessage[];
   setMessages: (messages: ContactMessage[]) => void;
-  biography: any;
-  setBiography: (bio: any) => void;
+  biography: Bio;
+  setBiography: (bio: Bio) => void;
   isAdminLoggedIn: boolean;
   setIsAdminLoggedIn: (loggedIn: boolean) => void;
   resetAllToDefaults: () => void;

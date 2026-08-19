@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { initializeApp } from 'firebase/app';
+import { initializeApp, type FirebaseApp } from 'firebase/app';
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -26,10 +26,13 @@ export const ADMIN_EMAIL = ((import.meta.env.VITE_FIREBASE_ADMIN_EMAIL as string
 /** True when the required Firebase Web App config values are present. */
 export const FIREBASE_CONFIGURED = Boolean(apiKey && authDomain && projectId && appId);
 
+/** The initialized Firebase app instance, or null when Firebase is not configured. */
+export let app: FirebaseApp | null = null;
+
 let auth: Auth | null = null;
 
 if (FIREBASE_CONFIGURED) {
-  const app = initializeApp({
+  app = initializeApp({
     apiKey,
     authDomain,
     projectId,

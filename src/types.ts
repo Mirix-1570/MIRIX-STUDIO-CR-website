@@ -36,6 +36,19 @@ export interface ShopProduct {
   inStock: boolean;
 }
 
+export interface Bio {
+  name: string;
+  tagline: string;
+  story: string;
+  location: string;
+  whatsapp: string;
+  email: string;
+  facebook: string;
+  facebookUrl: string;
+  instagram: string;
+  instagramUrl: string;
+}
+
 export interface ContactMessage {
   id: string;
   name: string;
@@ -45,6 +58,7 @@ export interface ContactMessage {
   message: string;
   date: string;
   read: boolean;
+  createdAt?: number;
 }
 
 export interface CustomEstimate {
