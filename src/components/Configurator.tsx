@@ -481,7 +481,7 @@ export default function Configurator({ biography }: ConfiguratorProps) {
 
                 <button
                   onClick={handleSendEstimate}
-                  className="w-full py-4 bg-black text-white text-center font-sans font-bold text-xs tracking-widest uppercase rounded-sm hover:bg-zinc-800 transition-all duration-300 flex items-center justify-center space-x-2.5 cursor-pointer shadow-md shadow-black/10 group"
+                  className="w-full py-4 px-4 bg-black text-white text-center font-sans font-bold text-xs tracking-widest uppercase rounded-sm hover:bg-zinc-800 transition-all duration-300 flex items-center justify-center space-x-2.5 cursor-pointer shadow-md shadow-black/10 group"
                 >
                   <MessageSquare className="w-4 h-4 group-hover:scale-110 transition-transform" />
                   <span>Solicitar Proforma vía WhatsApp</span>
