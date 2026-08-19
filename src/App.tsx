@@ -15,6 +15,7 @@ import Configurator from './components/Configurator';
 import Shop from './components/Shop';
 import Contact from './components/Contact';
 import AdminPanel from './components/AdminPanel';
+import { adminLogout } from './lib/firebase';
 import CartDrawer from './components/CartDrawer';
 import { PortfolioItem, ServicePlan, ShopProduct, ContactMessage } from './types';
 import {
@@ -66,14 +67,7 @@ export default function App() {
     getSavedData('mirix_cart', [])
   );
 
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
-    try {
-      const saved = sessionStorage.getItem('mirix_admin_logged');
-      return saved === 'true';
-    } catch {
-      return false;
-    }
-  });
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
   // PERSISTENCE TRIGGERS
   useEffect(() => {
@@ -99,14 +93,6 @@ export default function App() {
   useEffect(() => {
     saveData('mirix_cart', cart);
   }, [cart]);
-
-  useEffect(() => {
-    try {
-      sessionStorage.setItem('mirix_admin_logged', String(isAdminLoggedIn));
-    } catch (e) {
-      console.error(e);
-    }
-  }, [isAdminLoggedIn]);
 
   // MESSAGES DISPATCH
   const handleAddMessage = (payload: Omit<ContactMessage, 'id' | 'date' | 'read'>) => {
@@ -155,7 +141,6 @@ export default function App() {
     localStorage.removeItem('mirix_products');
     localStorage.removeItem('mirix_messages');
     localStorage.removeItem('mirix_cart');
-    localStorage.removeItem('mirix_users');
     
     setBiography(INITIAL_BIOGRAPHY);
     setPlans(INITIAL_PLANS);
@@ -176,7 +161,7 @@ export default function App() {
         cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
         openCart={() => setCartOpen(true)}
         isAdminLoggedIn={isAdminLoggedIn}
-        logoutAdmin={() => setIsAdminLoggedIn(false)}
+        logoutAdmin={() => { adminLogout(); setIsAdminLoggedIn(false); }}
       />
 
       {/* Main Dynamic Workspace Frame */}

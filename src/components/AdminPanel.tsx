@@ -4,12 +4,12 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import {
   Lock, Unlock, LogOut, Settings, Plus, Trash2, Edit2, CheckCircle, Eye,
-  LayoutDashboard, ShoppingBag, FolderOpen, Mail, UserCheck, UserPlus, RefreshCw, Key, ArrowRight
+  LayoutDashboard, ShoppingBag, FolderOpen, Mail, UserCheck, RefreshCw, Key, ArrowRight, EyeOff
 } from 'lucide-react';
 import { ServicePlan, ShopProduct, PortfolioItem, ContactMessage } from '../types';
+import { FIREBASE_CONFIGURED, ADMIN_EMAIL, adminLogin, adminLogout, onAdminAuthChange, mapAuthError } from '../lib/firebase';
 
 interface AdminPanelProps {
   plans: ServicePlan[];
@@ -44,12 +44,12 @@ export default function AdminPanel({
 }: AdminPanelProps) {
   
   // Auth Form states
-  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [authError, setAuthError] = useState('');
-  const [authSuccess, setAuthSuccess] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Active Control Panel Tab
   const [activeTab, setActiveTab] = useState<'plans' | 'products' | 'portfolio' | 'messages' | 'biography'>('messages');
@@ -92,14 +92,14 @@ export default function AdminPanel({
   const [bioInstagram, setBioInstagram] = useState(biography.instagram);
   const [bioFacebook, setBioFacebook] = useState(biography.facebook);
 
-  // Authentication Setup on launch on local storage
+  // Firebase Auth session check (persists across reloads)
   useEffect(() => {
-    // Check if there is any account created. If not, seed default admin/password
-    const existingUsers = localStorage.getItem('mirix_users');
-    if (!existingUsers) {
-      const defaultUsers = [{ username: 'admin', password: 'password' }];
-      localStorage.setItem('mirix_users', JSON.stringify(defaultUsers));
-    }
+    const unsubscribe = onAdminAuthChange((user) => {
+      const authorized = !!user && user.email?.trim().toLowerCase() === ADMIN_EMAIL;
+      setIsAdminLoggedIn(authorized);
+      setCheckingAuth(false);
+    });
+    return unsubscribe;
   }, []);
 
   // Hydrate Bio states if parent changes
@@ -114,76 +114,24 @@ export default function AdminPanel({
     setBioFacebook(biography.facebook);
   }, [biography]);
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError('');
-    setAuthSuccess('');
 
-    if (!username.trim() || !password.trim()) {
+    if (!email.trim() || !password) {
       setAuthError('Por favor complete todos los campos.');
       return;
     }
 
+    setSubmitting(true);
     try {
-      const usersStr = localStorage.getItem('mirix_users') || '[]';
-      const users = JSON.parse(usersStr);
-
-      const foundUser = users.find(
-        (u: any) => u.username.toLowerCase() === username.trim().toLowerCase() && u.password === password
-      );
-
-      if (foundUser) {
-        setIsAdminLoggedIn(true);
-        setAuthSuccess('Ingreso autorizado. ¡Bienvenida, Miranda!');
-        setUsername('');
-        setPassword('');
-      } else {
-        setAuthError('Credenciales incorrectas. Verifique e intente nuevamente.');
-      }
-    } catch (err) {
-      setAuthError('Fallo en el sistema de autenticación de seguridad.');
-    }
-  };
-
-  const handleRegisterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setAuthError('');
-    setAuthSuccess('');
-
-    if (!username.trim() || !password || !confirmPassword) {
-      setAuthError('Por favor complete todos los campos.');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setAuthError('Las contraseñas no coinciden.');
-      return;
-    }
-
-    if (password.length < 6) {
-      setAuthError('La contraseña debe tener al menos 6 caracteres.');
-      return;
-    }
-
-    try {
-      const usersStr = localStorage.getItem('mirix_users') || '[]';
-      const users = JSON.parse(usersStr);
-
-      const exists = users.some((u: any) => u.username.toLowerCase() === username.trim().toLowerCase());
-      if (exists) {
-        setAuthError('Este nombre de usuario ya está registrado en el sistema.');
-        return;
-      }
-
-      const updatedUsers = [...users, { username: username.trim(), password }];
-      localStorage.setItem('mirix_users', JSON.stringify(updatedUsers));
-      
-      setAuthSuccess('Registro completo. Perfil creado exitosamente. Ya puedes iniciar sesión.');
-      setAuthMode('login');
+      await adminLogin(email.trim(), password);
+      setIsAdminLoggedIn(true);
       setPassword('');
-      setConfirmPassword('');
     } catch (err) {
-      setAuthError('Error guardando la cuenta.');
+      setAuthError(mapAuthError(err));
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -407,12 +355,13 @@ export default function AdminPanel({
 
   // Sign out admin
   const handleLogout = () => {
+    adminLogout();
     setIsAdminLoggedIn(false);
   };
 
   // RESET FALLBACKS
   const handleReset = () => {
-    if (confirm('¿Restablecer todos los datos editados vuelven hoy a sus valores originales iniciales? Se borrarán cuentas registradas extra.')) {
+    if (confirm('¿Restablecer todos los datos editados vuelven hoy a sus valores originales iniciales?')) {
       resetAllToDefaults();
       setIsAdminLoggedIn(false);
       alert('Sitio web restablecido.');
@@ -423,10 +372,28 @@ export default function AdminPanel({
     <div className="bg-zinc-950 text-white min-h-[85vh] py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         
-        {/* UNAUTHENTICATED: LOGIN & SIGN IN VIEW (Requirement #6) */}
+        {/* UNAUTHENTICATED: LOGIN & SIGN IN VIEW */}
         {!isAdminLoggedIn ? (
           <div className="max-w-md mx-auto bg-black border border-zinc-900 p-8 rounded-sm shadow-2xl relative overflow-hidden">
             <div className="absolute inset-0 opacity-5 pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]" />
+            
+            {!FIREBASE_CONFIGURED ? (
+              <div className="text-center mb-8">
+                <div className="mx-auto w-12 h-12 rounded-full bg-white flex items-center justify-center text-black mb-3">
+                  <Lock className="w-5 h-5" />
+                </div>
+                <h2 className="text-xl font-sans font-black tracking-tight uppercase">Firebase no configurado</h2>
+                <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
+                  Agregue las variables <span className="text-white font-mono">VITE_FIREBASE_*</span> en su archivo .env (vea .env.example) y reinicie el servidor para habilitar el acceso administrativo.
+                </p>
+              </div>
+            ) : checkingAuth ? (
+              <div className="text-center py-16">
+                <div className="mx-auto w-10 h-10 rounded-full border-2 border-zinc-700 border-t-white animate-spin mb-4" />
+                <p className="text-[10px] text-zinc-400 font-mono uppercase tracking-widest">Verificando sesión…</p>
+              </div>
+            ) : (
+              <>
             
             {/* Logo heading */}
             <div className="text-center mb-8">
@@ -434,12 +401,10 @@ export default function AdminPanel({
                 <Lock className="w-5 h-5" />
               </div>
               <h2 className="text-2xl font-sans font-black tracking-tight uppercase">
-                {authMode === 'login' ? 'Acceso Administrativo' : 'Crear Cuenta Admin'}
+                Acceso Administrativo
               </h2>
               <p className="text-xs text-zinc-400 mt-1">
-                {authMode === 'login' 
-                  ? 'Inicie sesión para editar planes, tienda y proformas.' 
-                  : 'Registre un nuevo perfil de control administrativo.'}
+                Inicie sesión para editar planes, tienda y proformas.
               </p>
             </div>
 
@@ -450,85 +415,50 @@ export default function AdminPanel({
               </div>
             )}
 
-            {/* Success notifications */}
-            {authSuccess && (
-              <div className="p-3.5 mb-4 bg-green-950/40 border border-green-900 rounded text-xs text-green-400 font-mono">
-                {authSuccess}
-              </div>
-            )}
-
-            <form onSubmit={authMode === 'login' ? handleLoginSubmit : handleRegisterSubmit} className="space-y-4">
+            <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div>
-                <label className="text-[10px] font-semibold uppercase tracking-widest text-zinc-400 block mb-1">Nombre de Usuario</label>
+                <label className="text-[10px] font-semibold uppercase tracking-widest text-zinc-400 block mb-1">Correo electrónico</label>
                 <input
-                  type="text"
-                  placeholder="Ej: nomeselaclave"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  type="email"
+                  placeholder="Ej: miranda@mirixstudio.cr"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-zinc-950 border border-zinc-800 focus:border-white focus:outline-none p-3 text-sm text-white rounded-sm placeholder-zinc-700 font-sans transition-colors"
                 />
               </div>
 
               <div>
                 <label className="text-[10px] font-semibold uppercase tracking-widest text-zinc-400 block mb-1">Contraseña secreta</label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-zinc-950 border border-zinc-800 focus:border-white focus:outline-none p-3 text-sm text-white rounded-sm placeholder-zinc-700 font-mono transition-colors"
-                />
-              </div>
-
-              {authMode === 'register' && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  className="space-y-4"
-                >
-                  <label className="text-[10px] font-semibold uppercase tracking-widest text-zinc-400 block mb-1">Confirmar contraseña</label>
+                <div className="relative">
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 focus:border-white focus:outline-none p-3 text-sm text-white rounded-sm placeholder-zinc-700 font-mono transition-colors"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-zinc-950 border border-zinc-800 focus:border-white focus:outline-none p-3 text-sm text-white rounded-sm placeholder-zinc-700 font-mono transition-colors pr-10"
                   />
-                </motion.div>
-              )}
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-zinc-500 hover:text-white transition-colors cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
 
               <button
                 type="submit"
-                className="w-full py-3.5 bg-white text-black font-sans font-bold text-xs tracking-widest uppercase rounded-sm hover:bg-zinc-200 transition-colors flex items-center justify-center space-x-2 cursor-pointer mt-6"
+                disabled={submitting}
+                className="w-full py-3.5 bg-white text-black font-sans font-bold text-xs tracking-widest uppercase rounded-sm hover:bg-zinc-200 transition-colors flex items-center justify-center space-x-2 cursor-pointer mt-6 disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {authMode === 'login' ? <Unlock className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
-                <span>{authMode === 'login' ? 'Iniciar Sesión' : 'Registrar Credencial'}</span>
+                <Unlock className="w-4 h-4" />
+                <span>{submitting ? 'Verificando…' : 'Iniciar Sesión'}</span>
               </button>
             </form>
-
-            <div className="pt-6 mt-6 border-t border-zinc-900 text-center text-xs">
-              {authMode === 'login' ? (
-                <p className="text-zinc-500">
-                  ¿No tienes acceso?{' '}
-                  <button
-                    onClick={() => setAuthMode('register')}
-                    className="text-white hover:underline uppercase text-[10px] font-semibold tracking-wider cursor-pointer"
-                  >
-                    Registrar Cuenta (Sign In)
-                  </button>
-                </p>
-              ) : (
-                <p className="text-zinc-500">
-                  ¿Ya tienes un usuario autorizado?{' '}
-                  <button
-                    onClick={() => setAuthMode('login')}
-                    className="text-white hover:underline uppercase text-[10px] font-semibold tracking-wider cursor-pointer"
-                  >
-                    Ingresar (Log In)
-                  </button>
-                </p>
-              )}
-            </div>
+              </>
+            )}
 
           </div>
         ) : (
