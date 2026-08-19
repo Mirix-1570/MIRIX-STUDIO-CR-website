@@ -125,7 +125,7 @@ export default function Configurator({ biography }: ConfiguratorProps) {
   const photosProgress = ((photosEdited - 5) / 75) * 100;
 
   return (
-    <section className="bg-gradient-to-b from-[#FAFAFA] to-neutral-100/50 text-zinc-900 py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-200 relative overflow-hidden">
+    <section className="bg-gradient-to-b from-[#FAFAFA] to-neutral-100/50 text-zinc-900 pt-20 pb-32 lg:pb-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-200 relative overflow-hidden">
 
       {/* Decorative background accents */}
       <div className="absolute right-0 top-0 w-96 h-96 bg-neutral-200/30 rounded-full blur-3xl pointer-events-none" />
@@ -495,6 +495,41 @@ export default function Configurator({ biography }: ConfiguratorProps) {
 
         </div>
 
+      </div>
+
+      {/* Mobile sticky summary bar — live total always visible, no scroll needed (mobile only) */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+        <div
+          className="flex items-center justify-between gap-3 px-4 pt-3"
+          style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}
+        >
+          <div className="min-w-0 flex-1">
+            <span className="block text-[9px] font-mono tracking-widest uppercase text-zinc-500">Inversión Total · En Vivo</span>
+            <motion.span
+              key={totalPrice}
+              initial={{ opacity: 0.5, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              className="block text-xl font-serif font-light tracking-tight text-black leading-tight"
+            >
+              {new Intl.NumberFormat('es-CR', {
+                style: 'currency',
+                currency: 'CRC',
+                minimumFractionDigits: 0,
+              }).format(totalPrice)}
+            </motion.span>
+            <span className="block text-[9px] font-mono text-zinc-400 truncate">
+              {serviceType === 'photo' ? 'Solo Fotografía' : serviceType === 'video' ? 'Solo Video' : 'Combo M&M'} · {hours}h · {photosEdited} fotos · {[isDesignSelected, isSocialSetupSelected, isRawDeliverySelected].filter(Boolean).length} add-on
+            </span>
+          </div>
+          <button
+            onClick={handleSendEstimate}
+            className="shrink-0 flex items-center space-x-2 bg-black text-white px-4 py-3 rounded-sm text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors cursor-pointer active:scale-95"
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span>Solicitar</span>
+          </button>
+        </div>
       </div>
     </section>
   );
