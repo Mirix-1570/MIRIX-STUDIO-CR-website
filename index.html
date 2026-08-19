@@ -7,6 +7,16 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Hidden Netlify Forms registration form: the deploy bot only detects forms in
+         static HTML, and this SPA renders its form with React. Field names must match
+         the AJAX submission from src/components/Contact.tsx exactly. -->
+    <form name="contact" netlify data-netlify="true" style="display:none" aria-hidden="true">
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <input type="tel" name="phone" />
+      <input type="text" name="service" />
+      <textarea name="message"></textarea>
+    </form>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
