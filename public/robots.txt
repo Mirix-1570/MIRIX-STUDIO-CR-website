@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mirixstudiocr.netlify.app/sitemap.xml
