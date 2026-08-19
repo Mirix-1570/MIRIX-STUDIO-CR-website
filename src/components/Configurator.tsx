@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Calculator, Check, MessageSquare, ArrowRight, Camera, Lightbulb,
-  Film, Layers, Globe, Share2, FileImage, Sparkles, Clock, Image as ImageIcon
+  Film, Layers, Palette, Share2, FileImage, Sparkles, Clock, Image as ImageIcon
 } from 'lucide-react';
 
 interface ConfiguratorProps {
@@ -21,7 +21,7 @@ export default function Configurator({ biography }: ConfiguratorProps) {
   const [serviceType, setServiceType] = useState<'photo' | 'video' | 'combo'>('combo');
   const [hours, setHours] = useState<number>(3);
   const [photosEdited, setPhotosEdited] = useState<number>(20);
-  const [isWebDevSelected, setIsWebDevSelected] = useState<boolean>(false);
+  const [isDesignSelected, setIsDesignSelected] = useState<boolean>(false);
   const [isSocialSetupSelected, setIsSocialSetupSelected] = useState<boolean>(false);
   const [isRawDeliverySelected, setIsRawDeliverySelected] = useState<boolean>(false);
 
@@ -43,13 +43,13 @@ export default function Configurator({ biography }: ConfiguratorProps) {
     const hoursPrice = hours * hourlyCost;
     const photosPrice = photosEdited * 1500;
 
-    const webDevAddon = isWebDevSelected ? 120000 : 0;
+    const designAddon = isDesignSelected ? 120000 : 0;
     const socialSetupAddon = isSocialSetupSelected ? 35000 : 0;
     const rawDeliveryAddon = isRawDeliverySelected ? 20000 : 0;
 
-    const calculatedTotal = baseRate + hoursPrice + photosPrice + webDevAddon + socialSetupAddon + rawDeliveryAddon;
+    const calculatedTotal = baseRate + hoursPrice + photosPrice + designAddon + socialSetupAddon + rawDeliveryAddon;
     setTotalPrice(calculatedTotal);
-  }, [serviceType, hours, photosEdited, isWebDevSelected, isSocialSetupSelected, isRawDeliverySelected]);
+  }, [serviceType, hours, photosEdited, isDesignSelected, isSocialSetupSelected, isRawDeliverySelected]);
 
   const cleanPhone = (phone: string) => {
     return phone.replace(/[^0-9+]/g, '');
@@ -63,7 +63,7 @@ export default function Configurator({ biography }: ConfiguratorProps) {
     }).format(totalPrice);
 
     const addonsText = [
-      isWebDevSelected ? '• Desarrollo Web Profesional' : '',
+      isDesignSelected ? '• Diseño Gráfico para redes sociales' : '',
       isSocialSetupSelected ? '• Optimización de Redes Sociales' : '',
       isRawDeliverySelected ? '• Entrega de Archivos RAW Brutos' : '',
     ].filter(Boolean).join('\n');
@@ -92,10 +92,10 @@ export default function Configurator({ biography }: ConfiguratorProps) {
   // Addon options
   const addons = [
     {
-      id: 'webDev' as const,
-      selected: isWebDevSelected,
-      toggle: () => setIsWebDevSelected(!isWebDevSelected),
-      icon: Globe,
+      id: 'design' as const,
+      selected: isDesignSelected,
+      toggle: () => setIsDesignSelected(!isDesignSelected),
+      icon: Palette,
       title: 'Diseño Gráfico para redes sociales',
       desc: 'Te entregamos un set de plantillas editables para tus publicaciones y stories en CR.',
       price: '+₡120k',
@@ -165,7 +165,7 @@ export default function Configurator({ biography }: ConfiguratorProps) {
             <div className="w-px h-10 bg-neutral-200" />
             <div className="text-center">
               <span className="block text-2xl font-serif font-light text-black leading-none">
-                {[isWebDevSelected, isSocialSetupSelected, isRawDeliverySelected].filter(Boolean).length}
+                {[isDesignSelected, isSocialSetupSelected, isRawDeliverySelected].filter(Boolean).length}
               </span>
               <span className="text-[9px] font-mono tracking-widest uppercase text-zinc-500">Add-ons</span>
             </div>
@@ -403,7 +403,7 @@ export default function Configurator({ biography }: ConfiguratorProps) {
                 </div>
 
                 {/* Addon lines */}
-                {isWebDevSelected && (
+                {isDesignSelected && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
