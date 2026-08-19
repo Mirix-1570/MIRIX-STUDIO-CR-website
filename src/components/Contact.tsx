@@ -70,6 +70,20 @@ export default function Contact({ biography, addMessage }: ContactProps) {
       message
     });
 
+    // Fire-and-forget notifications (non-blocking; failures tolerated, e.g. local dev)
+    // 1) Email via Netlify Forms (AJAX submission; dashboard email notification)
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ 'form-name': 'contact', name, email, phone, service, message }).toString(),
+    }).catch(() => {});
+    // 2) Telegram bot via Netlify Function (token stays server-side, never in the bundle)
+    fetch('/.netlify/functions/notify-telegram', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, phone, service, message }),
+    }).catch(() => {});
+
     setSubmitted(true);
   };
 
@@ -201,12 +215,15 @@ export default function Contact({ biography, addMessage }: ContactProps) {
               {!submitted ? (
                 <motion.form
                   key="contact-form"
+                  name="contact"
+                  data-netlify="true"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   onSubmit={handleSubmit}
                   className="space-y-6"
                 >
+                  <input type="hidden" name="form-name" value="contact" />
                   <div className="flex flex-col space-y-1.5">
                     <h4 className="text-lg font-serif font-light tracking-tight uppercase text-zinc-950">Escríbenos</h4>
                     <p className="text-xs text-zinc-500">Miranda procesará su mensaje de forma confidencial.</p>
@@ -219,6 +236,7 @@ export default function Contact({ biography, addMessage }: ContactProps) {
                       <label className="text-[10px] font-semibold tracking-widest text-zinc-500 uppercase">Su Nombre</label>
                       <input
                         type="text"
+                        name="name"
                         placeholder="Ej: Sofía Quesada"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -232,6 +250,7 @@ export default function Contact({ biography, addMessage }: ContactProps) {
                       <label className="text-[10px] font-semibold tracking-widest text-zinc-500 uppercase">Su Correo Electrónico</label>
                       <input
                         type="email"
+                        name="email"
                         placeholder="ejemplo@correo.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -247,6 +266,7 @@ export default function Contact({ biography, addMessage }: ContactProps) {
                       <label className="text-[10px] font-semibold tracking-widest text-zinc-500 uppercase">Su Teléfono (WhatsApp)</label>
                       <input
                         type="tel"
+                        name="phone"
                         placeholder="Ej: +506 88888888"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
@@ -259,6 +279,7 @@ export default function Contact({ biography, addMessage }: ContactProps) {
                     <div className="space-y-1.5">
                       <label className="text-[10px] font-semibold tracking-widest text-zinc-500 uppercase">Especialidad de Interés</label>
                       <select
+                        name="service"
                         value={service}
                         onChange={(e) => setService(e.target.value)}
                         className="w-full bg-white border border-neutral-200 focus:border-black focus:outline-none p-3 text-sm rounded-none text-zinc-900 font-sans transition-colors cursor-pointer"
@@ -276,6 +297,7 @@ export default function Contact({ biography, addMessage }: ContactProps) {
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-semibold tracking-widest text-zinc-500 uppercase">Detalles del Proyecto</label>
                     <textarea
+                      name="message"
                       rows={5}
                       placeholder="Describa brevemente la idea, locación, fecha estimada del rodaje o tipo de plataforma web que imagina..."
                       value={message}
