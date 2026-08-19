@@ -35,6 +35,45 @@ import {
   saveData
 } from './data';
 
+// Per-section SEO metadata: the SPA renders one static <title> in index.html,
+// so each tab updates document.title + meta description on navigation.
+const TAB_SEO: Record<string, { title: string; description: string }> = {
+  home: {
+    title: 'Mirix Studio CR | Producción Audiovisual y Diseño en Costa Rica',
+    description:
+      'Mirix Studio CR — Producción audiovisual y diseño en Costa Rica. Creación de video, fotografía artística, diseño gráfico y gestión de redes sociales. Base en Esparza, cobertura en todo el país.'
+  },
+  portfolio: {
+    title: 'Portafolio | Mirix Studio CR',
+    description:
+      'Explora el portafolio de Mirix Studio CR: videos, fotografía artística y proyectos de diseño en Costa Rica.'
+  },
+  pricing: {
+    title: 'Planes y Cotizador | Mirix Studio CR',
+    description:
+      'Planes de producción audiovisual y diseño en Costa Rica. Cotizá tu proyecto con el configurador de Mirix Studio CR.'
+  },
+  about: {
+    title: 'Quiénes Somos | Mirix Studio CR',
+    description:
+      'Conocé a Mirix Studio CR, estudio costarricense de producción audiovisual y diseño con base en Esparza y cobertura en todo el país.'
+  },
+  shop: {
+    title: 'Tienda | Mirix Studio CR',
+    description:
+      'Equipo y accesorios para creadores de contenido: estabilizadores, aros de luz, micrófonos y más. Tienda de Mirix Studio CR.'
+  },
+  contact: {
+    title: 'Contacto | Mirix Studio CR',
+    description:
+      'Contactá a Mirix Studio CR por WhatsApp, email o formulario. Base en Esparza, Puntarenas, con cobertura en todo Costa Rica.'
+  },
+  admin: {
+    title: 'Panel Admin | Mirix Studio CR',
+    description: 'Acceso de administrador de Mirix Studio CR.'
+  }
+};
+
 export default function App() {
   const [currentTab, setCurrentTab] = useState<string>('home');
   const [cartOpen, setCartOpen] = useState(false);
@@ -51,6 +90,14 @@ export default function App() {
   );
 
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+
+  // Per-section SEO: sync <title> and meta description with the active tab
+  useEffect(() => {
+    const seo = TAB_SEO[currentTab] ?? TAB_SEO.home;
+    document.title = seo.title;
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', seo.description);
+  }, [currentTab]);
 
   // Refs mirroring current state so Firestore snapshot callbacks never close over stale values
   const biographyRef = useRef(biography);
