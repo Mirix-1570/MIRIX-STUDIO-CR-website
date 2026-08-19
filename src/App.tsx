@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, ArrowRight, Video, Camera, Star, Code, Compass, ArrowUpRight, Instagram } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import About from './components/About';
-import Portfolio from './components/Portfolio';
-import Pricing from './components/Pricing';
-import Configurator from './components/Configurator';
-import Shop from './components/Shop';
-import Contact from './components/Contact';
-import AdminPanel from './components/AdminPanel';
+const About = lazy(() => import('./components/About'));
+const Portfolio = lazy(() => import('./components/Portfolio'));
+const Pricing = lazy(() => import('./components/Pricing'));
+const Configurator = lazy(() => import('./components/Configurator'));
+const Shop = lazy(() => import('./components/Shop'));
+const Contact = lazy(() => import('./components/Contact'));
+const AdminPanel = lazy(() => import('./components/AdminPanel'));
 import { adminLogout } from './lib/firebase';
 import {
   FIRESTORE_CONFIGURED,
@@ -24,7 +24,7 @@ import {
   addMessage,
   deleteAllMessages
 } from './lib/firestore';
-import CartDrawer from './components/CartDrawer';
+const CartDrawer = lazy(() => import('./components/CartDrawer'));
 import { Bio, PortfolioItem, ServicePlan, ShopProduct, ContactMessage } from './types';
 import {
   INITIAL_BIOGRAPHY,
@@ -295,6 +295,7 @@ export default function App() {
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
           >
+            <Suspense fallback={<div className="py-24 text-center text-xs text-zinc-400 font-mono tracking-widest uppercase">Cargando…</div>}>
             {currentTab === 'home' && (
               <>
                 <Hero setCurrentTab={setCurrentTab} biography={biography} />
@@ -434,6 +435,7 @@ export default function App() {
                 resetAllToDefaults={handleResetAllToDefaults}
               />
             )}
+            </Suspense>
           </motion.div>
         </AnimatePresence>
       </main>
