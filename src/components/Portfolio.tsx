@@ -87,7 +87,7 @@ export default function Portfolio({ portfolioItems, setCurrentTab }: PortfolioPr
         {/* Dynamic Grid Layout */}
         <motion.div
           layout
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           <AnimatePresence mode="popLayout">
             {filteredItems.map((item) => {
