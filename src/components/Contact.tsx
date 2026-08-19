@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, Phone, MapPin, Send, CheckCircle, Clock, Globe, ArrowRight, MessageSquare, ShieldCheck } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle, Clock, ArrowRight, MessageSquare, ShieldCheck } from 'lucide-react';
 import { ContactMessage } from '../types';
 
 interface ContactProps {
@@ -34,7 +34,6 @@ export default function Contact({ biography, addMessage }: ContactProps) {
     'Producción de Video',
     'Fotografía Profesional',
     'Gestión de Redes / Reels',
-    'Desarrollo Web Integrado',
     'Catálogo Dropshipping',
     'Consulta General / Alianzas'
   ];
@@ -163,11 +162,17 @@ export default function Contact({ biography, addMessage }: ContactProps) {
               </div>
             </div>
 
-            {/* Simulated architectural aesthetic map card (B&O Luxury style) */}
-            <div className="bg-white border border-neutral-200 p-5 rounded-none relative overflow-hidden shadow-sm">
+            {/* Location card: base info + directions link (Google Maps) */}
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Esparza,+Puntarenas,+Costa+Rica"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Cómo llegar a Esparza, Puntarenas, Costa Rica en Google Maps"
+              className="block bg-white border border-neutral-200 p-5 rounded-none relative overflow-hidden shadow-sm transition-all hover:border-neutral-400 hover:shadow-md"
+            >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[9px] text-zinc-500 tracking-widest font-mono uppercase">COSTA RICA • PACÍFICO</span>
-                <span className="text-[8px] bg-black text-white px-2 py-0.5 rounded-none uppercase font-mono font-bold">ESPARZA BASE</span>
+                <span className="text-[8px] bg-black text-white px-2 py-0.5 rounded-none uppercase font-mono font-bold">ESPARZA BASE ↗</span>
               </div>
               
               <div className="h-20 bg-[#FAFAFA] border border-neutral-200 rounded-none relative overflow-hidden flex items-center justify-center">
@@ -182,10 +187,10 @@ export default function Contact({ biography, addMessage }: ContactProps) {
                 
                 <div className="relative z-10 flex items-center space-x-2 bg-white border border-neutral-250 px-3 py-1.5 rounded-none shadow-sm">
                   <div className="h-2 w-2 rounded-full bg-black animate-ping" />
-                  <span className="text-[9px] font-semibold tracking-widest uppercase text-zinc-800 animate-pulse">Mirix Studio Sede principal</span>
+                  <span className="text-[9px] font-semibold tracking-widest uppercase text-zinc-800 animate-pulse">Base: Esparza · Cobertura en todo el país</span>
                 </div>
               </div>
-            </div>
+            </a>
 
           </div>
 
