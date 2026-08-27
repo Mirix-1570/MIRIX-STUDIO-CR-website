@@ -5,7 +5,7 @@
 
 export interface PortfolioItem {
   id: string;
-  type: 'video' | 'photo';
+  type: 'video' | 'photo' | 'design';
   title: string;
   category: string;
   description: string;

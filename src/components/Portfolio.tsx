@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Play, Eye, X, Filter, Camera, Film, ArrowRight, Check } from 'lucide-react';
+import { Play, Eye, X, Filter, Camera, Film, ArrowRight, Check, Palette } from 'lucide-react';
 import { PortfolioItem } from '../types';
 
 interface PortfolioProps {
@@ -14,7 +14,7 @@ interface PortfolioProps {
 }
 
 export default function Portfolio({ portfolioItems, setCurrentTab }: PortfolioProps) {
-  const [activeFilter, setActiveFilter] = useState<'all' | 'video' | 'photo'>('all');
+  const [activeFilter, setActiveFilter] = useState<'all' | 'video' | 'photo' | 'design'>('all');
   const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null);
 
   // Filter items based on selected category type
@@ -81,6 +81,17 @@ export default function Portfolio({ portfolioItems, setCurrentTab }: PortfolioPr
               <Film className="w-3.5 h-3.5" />
               <span>VIDEO</span>
             </button>
+            <button
+              onClick={() => setActiveFilter('design')}
+              className={`flex items-center space-x-2 px-5 py-2.5 rounded-none text-xs font-semibold tracking-wider uppercase transition-all duration-300 cursor-pointer ${
+                activeFilter === 'design'
+                  ? 'bg-black text-white'
+                  : 'text-zinc-500 hover:text-black'
+              }`}
+            >
+              <Palette className="w-3.5 h-3.5" />
+              <span>DISEÑO GRÁFICO</span>
+            </button>
           </div>
         </div>
 
@@ -126,7 +137,7 @@ export default function Portfolio({ portfolioItems, setCurrentTab }: PortfolioPr
                     </p>
                     
                     <span className="mt-3 flex items-center space-x-1.5 text-[10px] font-semibold tracking-widest uppercase text-black hover:underline">
-                      <span>{item.type === 'video' ? 'Ver cortometraje de video' : 'Visualismo completo'}</span>
+                      <span>{item.type === 'design' ? 'Explorar catálogo de diseño' : item.type === 'video' ? 'Ver cortometraje de video' : 'Visualismo completo'}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </span>
                   </div>
@@ -135,6 +146,8 @@ export default function Portfolio({ portfolioItems, setCurrentTab }: PortfolioPr
                   <div className="absolute top-4 right-4 bg-white/90 border border-neutral-250 p-2 rounded-none text-zinc-900 flex items-center space-x-1 shadow-sm">
                     {item.type === 'video' ? (
                       <Play className="w-3 h-3 fill-zinc-900" />
+                    ) : item.type === 'design' ? (
+                      <Palette className="w-3 h-3" />
                     ) : (
                       <Camera className="w-3 h-3" />
                     )}

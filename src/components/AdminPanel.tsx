@@ -75,7 +75,7 @@ export default function AdminPanel({
   // Portfolio CRUD states
   const [editingPortId, setEditingPortId] = useState<string | null>(null);
   const [portTitle, setPortTitle] = useState('');
-  const [portType, setPortType] = useState<'photo' | 'video'>('photo');
+  const [portType, setPortType] = useState<'photo' | 'video' | 'design'>('photo');
   const [portCategory, setPortCategory] = useState('Fotografía Professional');
   const [portDesc, setPortDesc] = useState('');
   const [portMediaUrl, setPortMediaUrl] = useState('');
@@ -945,7 +945,7 @@ export default function AdminPanel({
                                 <div>
                                   <h4 className="font-extrabold text-sm tracking-wide text-white uppercase">{item.title}</h4>
                                   <span className="text-[10px] font-mono uppercase bg-zinc-900 text-zinc-400 px-2 py-0.5 rounded border border-zinc-800 block w-fit mt-1">
-                                    {item.type === 'video' ? 'VIDEO CINEMÀTICO' : 'FOTOGRAFÍA'} • {item.category}
+                                    {item.type === 'video' ? 'VIDEO CINEMÀTICO' : item.type === 'design' ? 'DISEÑO GRÁFICO' : 'FOTOGRAFÍA'} • {item.category}
                                   </span>
                                 </div>
                               </div>
@@ -998,6 +998,7 @@ export default function AdminPanel({
                             >
                               <option value="photo">Fotografía Estática</option>
                               <option value="video">Vídeo Cinematográfico</option>
+                              <option value="design">Diseño Gráfico</option>
                             </select>
                           </div>
                         </div>

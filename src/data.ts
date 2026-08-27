@@ -147,6 +147,18 @@ export const INITIAL_PORTFOLIO: PortfolioItem[] = [
     links: [
       { url: "https://photos.app.goo.gl/G75uh8wSekZLHr3x8", label: "Ver Portfolio" }
     ]
+  },
+  {
+    id: "port-8",
+    type: "design",
+    title: "Catálogo PYE3M — Diseño Editorial",
+    category: "Diseño Gráfico",
+    description: "Catálogo completo de productos y servicios de PYE3M con diseño editorial elegante, composición cuidada y láminas visuales diseñadas para presentar la marca con alto impacto.",
+    mediaUrl: "/IMG-20260730-WA0000.jpg",
+    aspect: "landscape",
+    links: [
+      { url: "/CATALOGO%20PYE3M.pdf", label: "Ver Catálogo en PDF" }
+    ]
   }
 ];
 
