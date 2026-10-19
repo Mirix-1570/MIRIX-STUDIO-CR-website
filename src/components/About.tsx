@@ -56,7 +56,7 @@ export default function About({ biography }: AboutProps) {
             <img
               src="/logo/presentacion%2001.png"
               alt="Miranda Méndez, fundadora y directora creativa de Mirix Studio CR"
-              className="w-full aspect-[4/5] object-cover object-[center_22%] select-none"
+              className="w-full aspect-[4/5] object-cover object-[center_18%] select-none"
             />
           </motion.div>
 

@@ -32,48 +32,31 @@ function BotanicalField() {
 export default function Hero({ onNavigate, portfolioCount, location }: HeroProps) {
   return (
     <section id="home" className="relative w-full overflow-hidden bg-vino text-white">
+      <img
+        src="/imagen01.png"
+        alt=""
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-[40%_30%] lg:inset-auto lg:top-1/2 lg:-left-[2vw] lg:h-auto lg:w-[142vw] lg:max-w-none lg:-translate-y-[48%]"
+      />
       <div
-        className="absolute inset-0 pointer-events-none opacity-20 mix-blend-screen"
+        className="absolute inset-0"
         style={{
           background:
-            'radial-gradient(circle at 75% 25%, #E9C176 0%, transparent 45%), radial-gradient(circle at 15% 80%, #1A2E26 0%, transparent 55%), #2D0618',
+            'linear-gradient(100deg, rgba(45,6,24,0.96) 0%, rgba(45,6,24,0.86) 22%, rgba(45,6,24,0.45) 38%, rgba(21,0,8,0.12) 52%, rgba(21,0,8,0.45) 100%)',
         }}
-      >
+      />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-[46%] opacity-70">
         <BotanicalField />
       </div>
 
-      <div className="relative isolate w-full px-6 lg:px-16 py-14 lg:py-28 flex flex-col justify-between">
-        <img
-          src="/imagen01.png"
-          alt=""
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover object-[center_40%] lg:inset-auto lg:left-0 lg:top-1/2 lg:h-[192%] lg:w-auto lg:max-w-none lg:-translate-y-[46%]"
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              'linear-gradient(100deg, rgba(45,6,24,0.9) 0%, rgba(45,6,24,0.62) 26%, rgba(21,0,8,0.22) 48%, rgba(21,0,8,0.58) 100%)',
-          }}
-        />
-        <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-2 bg-bosque/80 border border-[#2D5A46] px-3.5 py-1.5">
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-oro-calido" />
-            <span className="font-label text-[10px] tracking-[0.22em] text-mint uppercase font-semibold">
-              Esparza, Puntarenas · Costa Rica
-            </span>
-          </div>
-          <div className="hidden sm:flex items-center gap-6">
-            <span className="font-label text-[10px] uppercase tracking-[0.22em] text-[#FFD9E4] font-medium">
-              Vol. 2026 // Edición Atelier
-            </span>
-            <span className="w-12 h-px bg-oro/50" />
-            <span className="font-label text-[10px] uppercase tracking-[0.18em] text-champagne bg-borgona px-3 py-1 border border-oro/40 font-semibold">
-              Estudio en activo
-            </span>
-          </div>
+      <div className="relative z-10 w-full px-6 lg:px-16 py-12 lg:py-16">
+        <div className="mb-8 inline-flex items-center gap-2 bg-bosque/90 border border-[#2D5A46] px-3.5 py-1.5">
+          <span className="inline-block w-2 h-2 rounded-full bg-oro-calido" />
+          <span className="font-label text-[10px] tracking-[0.22em] text-mint uppercase font-semibold">
+            Esparza, Puntarenas · Costa Rica
+          </span>
         </div>
 
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
           <div className="lg:col-span-6 space-y-5">
             <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-bosque border border-[#2D5A46]">
               <span className="font-label text-[10px] uppercase tracking-[0.22em] text-champagne font-semibold">
@@ -105,7 +88,7 @@ export default function Hero({ onNavigate, portfolioCount, location }: HeroProps
           </div>
 
           <div className="lg:col-span-4 lg:col-start-9 w-full">
-            <div className="bg-ciruela/80 border border-oro/40 p-5 space-y-4 shadow-2xl relative backdrop-blur-md">
+            <div className="bg-[#2A0816]/95 border border-oro/50 p-5 space-y-4 shadow-2xl relative">
               <div className="flex items-start justify-between border-b border-oro/20 pb-3 gap-3">
                 <div>
                   <span className="font-label text-[10px] uppercase tracking-[0.22em] text-oro-calido font-semibold block">

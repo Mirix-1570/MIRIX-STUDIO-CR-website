@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import Navbar from './components/Navbar';
 import Logo from './components/Logo';
 import Hero from './components/Hero';
-import { Disciplines, Manifesto } from './components/Editorial';
+import Inspiration from './components/Inspiration';
 import Legal from './components/Legal';
 const About = lazy(() => import('./components/About'));
 const Portfolio = lazy(() => import('./components/Portfolio'));
@@ -338,9 +338,8 @@ export default function App() {
                   portfolioCount={portfolioItems.length}
                   location={biography.location}
                 />
-                <Manifesto />
                 <About biography={biography} />
-                <Disciplines />
+                <Inspiration />
                 <Portfolio portfolioItems={portfolioItems} setCurrentTab={navigate} />
                 <Pricing plans={plans} biography={biography} />
                 <Configurator biography={biography} />
