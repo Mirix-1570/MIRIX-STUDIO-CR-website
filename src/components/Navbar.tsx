@@ -18,7 +18,6 @@ const NAV = [
   { id: 'portfolio', label: 'Portafolio' },
   { id: 'retainers', label: 'Planes' },
   { id: 'about', label: 'Quiénes somos' },
-  { id: 'vault', label: 'Tienda' },
   { id: 'booking', label: 'Contacto' },
 ];
 

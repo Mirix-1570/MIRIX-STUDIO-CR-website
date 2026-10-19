@@ -33,8 +33,10 @@ export default function Hero({ onNavigate, portfolioCount, location }: HeroProps
   return (
     <section id="home" className="relative w-full overflow-hidden bg-vino text-white">
       <img
-        src="/imagen01.png"
+        src="/imagen01.jpg"
         alt=""
+        fetchPriority="high"
+        decoding="async"
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-[40%_30%] lg:inset-auto lg:top-1/2 lg:-left-[2vw] lg:h-auto lg:w-[142vw] lg:max-w-none lg:-translate-y-[48%]"
       />
       <div

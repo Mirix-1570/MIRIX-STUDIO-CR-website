@@ -137,6 +137,8 @@ export default function Inspiration() {
                 <img
                   src={src}
                   alt=""
+                  decoding="async"
+                  loading={slide < 4 ? 'eager' : 'lazy'}
                   className="aspect-[4/5] w-full object-cover"
                   draggable={false}
                 />

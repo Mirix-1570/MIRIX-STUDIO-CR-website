@@ -33,19 +33,16 @@ export default function Legal({ kind, email, location }: LegalProps) {
               El formulario de contacto recoge nombre, correo, teléfono, el servicio de interés y el mensaje. Esos datos se usan solo para responder la consulta y coordinar el proyecto. El mismo aviso puede enviarse por WhatsApp si lo pedís desde la confirmación.
             </p>
             <p>
-              El carrito de la tienda se guarda en este navegador. No crea una cuenta ni se envía a un servidor hasta que encargás el pedido por WhatsApp.
-            </p>
-            <p>
               No vendemos ni cedemos datos personales. Podés pedir la corrección o la eliminación de tu mensaje escribiendo a {email}.
             </p>
           </div>
         ) : (
           <div className="space-y-6 text-[15px] leading-7 text-malva">
             <p>
-              El sitio presenta los servicios de producción audiovisual, fotografía, diseño y tienda de Mirix Studio CR. Los precios publicados son una referencia para Esparza y Puntarenas centro. Otras zonas del país se cotizan con viático.
+              El sitio presenta los servicios de producción audiovisual, fotografía y diseño de Mirix Studio CR. Los precios publicados son una referencia para Esparza y Puntarenas centro. Otras zonas del país se cotizan con viático.
             </p>
             <p>
-              Una consulta o un plan elegido no reservan fecha hasta que Miranda lo confirme. Los encargos de la tienda se coordinan por WhatsApp: el pago y el envío se acuerdan en esa conversación.
+              Una consulta o un plan elegido no reservan fecha hasta que Miranda lo confirme. El pago y la entrega se acuerdan en la conversación de WhatsApp.
             </p>
             <p>
               Las fotografías, videos y piezas del portafolio pertenecen al estudio o a sus clientes, y no pueden reutilizarse sin permiso. El trabajo entregado a un cliente se rige por lo acordado en la cotización.

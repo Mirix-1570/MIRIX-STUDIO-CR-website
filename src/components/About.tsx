@@ -46,19 +46,14 @@ export default function About({ biography }: AboutProps) {
         <div className="w-16 h-[3px] bg-oro mt-3" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start mt-10">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="lg:col-span-5"
-          >
+          <div className="lg:col-span-5">
             <img
-              src="/logo/presentacion%2001.png"
+              src="/logo/presentacion%2001.jpg"
               alt="Miranda Méndez, fundadora y directora creativa de Mirix Studio CR"
+              decoding="async"
               className="w-full aspect-[4/5] object-cover object-[center_18%] select-none"
             />
-          </motion.div>
+          </div>
 
           <div className="lg:col-span-7 lg:pt-1">
             <motion.div

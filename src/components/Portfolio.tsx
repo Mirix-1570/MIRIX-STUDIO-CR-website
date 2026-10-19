@@ -72,7 +72,7 @@ export default function Portfolio({ portfolioItems, setCurrentTab }: PortfolioPr
               layout
               key={item.id}
               type="button"
-              initial={{ opacity: 0, y: 12 }}
+              initial={false}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
               onClick={() => setSelectedItem(item)}
@@ -82,6 +82,8 @@ export default function Portfolio({ portfolioItems, setCurrentTab }: PortfolioPr
                 <img
                   src={item.mediaUrl}
                   alt={item.title}
+                  decoding="async"
+                  loading="lazy"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />

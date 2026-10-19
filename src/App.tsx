@@ -10,12 +10,11 @@ import Logo from './components/Logo';
 import Hero from './components/Hero';
 import Inspiration from './components/Inspiration';
 import Legal from './components/Legal';
-const About = lazy(() => import('./components/About'));
-const Portfolio = lazy(() => import('./components/Portfolio'));
-const Pricing = lazy(() => import('./components/Pricing'));
-const Configurator = lazy(() => import('./components/Configurator'));
-const Shop = lazy(() => import('./components/Shop'));
-const Contact = lazy(() => import('./components/Contact'));
+import About from './components/About';
+import Portfolio from './components/Portfolio';
+import Pricing from './components/Pricing';
+import Configurator from './components/Configurator';
+import Contact from './components/Contact';
 const AdminPanel = lazy(() => import('./components/AdminPanel'));
 import {
   FIRESTORE_CONFIGURED,
@@ -25,15 +24,12 @@ import {
   addMessage,
   deleteAllMessages
 } from './lib/firestore';
-const CartDrawer = lazy(() => import('./components/CartDrawer'));
 import { Bio, PortfolioItem, ServicePlan, ShopProduct, ContactMessage } from './types';
 import {
   INITIAL_BIOGRAPHY,
   INITIAL_PLANS,
   INITIAL_PORTFOLIO,
-  INITIAL_PRODUCTS,
-  getSavedData,
-  saveData
+  INITIAL_PRODUCTS
 } from './data';
 
 // Per-section SEO metadata: the SPA renders one static <title> in index.html,
@@ -59,11 +55,6 @@ const TAB_SEO: Record<string, { title: string; description: string }> = {
     description:
       'Conocé a Mirix Studio CR, estudio costarricense de producción audiovisual y diseño con base en Esparza y cobertura en todo el país.'
   },
-  shop: {
-    title: 'Tienda | Mirix Studio CR',
-    description:
-      'Equipo y accesorios para creadores de contenido: estabilizadores, aros de luz, micrófonos y más. Tienda de Mirix Studio CR.'
-  },
   contact: {
     title: 'Contacto | Mirix Studio CR',
     description:
@@ -77,18 +68,13 @@ const TAB_SEO: Record<string, { title: string; description: string }> = {
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState<string>('home');
-  const [cartOpen, setCartOpen] = useState(false);
 
-  // STATE MANAGEMENT synced with Firestore (content) + localStorage (cart)
+  // STATE MANAGEMENT synced with Firestore
   const [biography, setBiography] = useState<Bio>(INITIAL_BIOGRAPHY);
   const [plans, setPlans] = useState<ServicePlan[]>(INITIAL_PLANS);
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(INITIAL_PORTFOLIO);
   const [products, setProducts] = useState<ShopProduct[]>(INITIAL_PRODUCTS);
   const [messages, setMessages] = useState<ContactMessage[]>([]);
-
-  const [cart, setCart] = useState<{ product: ShopProduct; quantity: number }[]>(() =>
-    getSavedData('mirix_cart', [])
-  );
 
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
@@ -190,11 +176,6 @@ export default function App() {
     }
   }, [products, isAdminLoggedIn]);
 
-  // CART persistence stays in localStorage (per-visitor session)
-  useEffect(() => {
-    saveData('mirix_cart', cart);
-  }, [cart]);
-
   // MESSAGES DISPATCH
   const handleAddMessage = (payload: Omit<ContactMessage, 'id' | 'date' | 'read'>) => {
     const createdAt = Date.now();
@@ -215,34 +196,6 @@ export default function App() {
     }
     // Optimistic local update so the admin inbox reflects the message instantly
     setMessages([newMessage, ...messages]);
-  };
-
-  // CART TRIGGERS
-  const addToCart = (product: ShopProduct) => {
-    const existingIndex = cart.findIndex(item => item.product.id === product.id);
-    if (existingIndex > -1) {
-      const updated = [...cart];
-      updated[existingIndex].quantity += 1;
-      setCart(updated);
-    } else {
-      setCart([...cart, { product, quantity: 1 }]);
-    }
-    setCartOpen(true); // open cart automatically on adding item
-  };
-
-  const removeFromCart = (productId: string) => {
-    setCart(cart.filter(item => item.product.id !== productId));
-  };
-
-  const updateQuantity = (productId: string, delta: number) => {
-    const updated = cart.map(item => {
-      if (item.product.id === productId) {
-        const newQty = item.quantity + delta;
-        return { ...item, quantity: Math.max(1, newQty) };
-      }
-      return item;
-    });
-    setCart(updated);
   };
 
   // REST RESET BUTTON SUPPORT
@@ -268,8 +221,6 @@ export default function App() {
       deleteAllMessages();
     }
 
-    localStorage.removeItem('mirix_cart');
-    setCart([]);
     setIsAdminLoggedIn(false);
   };
 
@@ -285,11 +236,9 @@ export default function App() {
       portfolio: 'portfolio',
       pricing: 'retainers',
       about: 'about',
-      shop: 'vault',
       contact: 'booking',
       services: 'services',
       retainers: 'retainers',
-      vault: 'vault',
       booking: 'booking',
     };
     const sectionId = sectionByTarget[target] ?? target;
@@ -317,12 +266,11 @@ export default function App() {
         <AnimatePresence mode="wait">
           <motion.div
             key={currentTab === 'home' ? 'home' : currentTab}
-            initial={{ opacity: 0, y: 12 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.35, ease: 'easeOut' }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
           >
-            <Suspense fallback={<div className="py-24 text-center font-label text-[10px] tracking-[0.22em] uppercase text-malva">Cargando…</div>}>
             {currentTab === 'privacy' || currentTab === 'terms' ? (
               <Legal kind={currentTab} email={biography.email} location={biography.location} />
             ) : currentTab !== 'admin' ? (
@@ -337,17 +285,10 @@ export default function App() {
                 <Portfolio portfolioItems={portfolioItems} setCurrentTab={navigate} />
                 <Pricing plans={plans} biography={biography} />
                 <Configurator biography={biography} />
-                <Shop
-                  products={products}
-                  addToCart={addToCart}
-                  cart={cart}
-                  removeFromCart={removeFromCart}
-                  updateQuantity={updateQuantity}
-                  openCart={() => setCartOpen(true)}
-                />
                 <Contact biography={biography} addMessage={handleAddMessage} />
               </>
             ) : (
+              <Suspense fallback={<div className="py-24 text-center font-label text-[10px] tracking-[0.22em] uppercase text-malva">Cargando…</div>}>
               <AdminPanel
                 plans={plans}
                 setPlans={setPlans}
@@ -363,21 +304,11 @@ export default function App() {
                 setIsAdminLoggedIn={setIsAdminLoggedIn}
                 resetAllToDefaults={handleResetAllToDefaults}
               />
+              </Suspense>
             )}
-            </Suspense>
           </motion.div>
         </AnimatePresence>
       </main>
-
-      {/* Persistent Shopping Cart Drawer */}
-      <CartDrawer
-        isOpen={cartOpen}
-        onClose={() => setCartOpen(false)}
-        cart={cart}
-        removeFromCart={removeFromCart}
-        updateQuantity={updateQuantity}
-        biography={biography}
-      />
 
       <footer className="w-full bg-bosque text-white border-t-2 border-oro/40">
         <div className="w-full px-6 lg:px-16 pt-16 pb-10">
@@ -408,7 +339,6 @@ export default function App() {
                 <button onClick={() => navigate('portfolio')} className="font-sans text-xs font-semibold tracking-[0.16em] uppercase text-sage hover:text-champagne cursor-pointer">Portafolio</button>
                 <button onClick={() => navigate('retainers')} className="font-sans text-xs font-semibold tracking-[0.16em] uppercase text-sage hover:text-champagne cursor-pointer">Planes</button>
                 <button onClick={() => navigate('about')} className="font-sans text-xs font-semibold tracking-[0.16em] uppercase text-sage hover:text-champagne cursor-pointer">Quiénes somos</button>
-                <button onClick={() => navigate('vault')} className="font-sans text-xs font-semibold tracking-[0.16em] uppercase text-sage hover:text-champagne cursor-pointer">Tienda</button>
                 <button onClick={() => navigate('booking')} className="font-sans text-xs font-semibold tracking-[0.16em] uppercase text-sage hover:text-champagne cursor-pointer">Contacto</button>
               </div>
             </div>

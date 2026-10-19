@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MapPin, Send, CheckCircle, Clock, ShieldCheck } from 'lucide-react';
+import { MapPin, Mail, Phone, Clock, Send, CheckCircle, ShieldCheck } from 'lucide-react';
 import { ContactMessage } from '../types';
 
 interface ContactProps {
@@ -19,8 +19,11 @@ interface ContactProps {
   addMessage: (message: Omit<ContactMessage, 'id' | 'date' | 'read'>) => void;
 }
 
+const MAP_QUERY = 'Esparza, Puntarenas, Costa Rica';
+const MAP_EMBED = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15717.266086695985!2d-84.67767374029188!3d9.990691541826509!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa036e05f9e6025%3A0xa29124e569265597!2sProvincia%20de%20Puntarenas%2C%20Esparza!5e0!3m2!1ses-419!2scr!4v1792444395758!5m2!1ses-419!2scr';
+const MAP_LINK = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(MAP_QUERY)}`;
+
 export default function Contact({ biography, addMessage }: ContactProps) {
-  // Form State
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -47,9 +50,7 @@ export default function Contact({ biography, addMessage }: ContactProps) {
     return newErrors;
   };
 
-  const cleanPhoneStr = (phoneNum: string) => {
-    return phoneNum.replace(/[^0-9+]/g, '');
-  };
+  const cleanPhoneStr = (phoneNum: string) => phoneNum.replace(/[^0-9+]/g, '');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,24 +61,13 @@ export default function Contact({ biography, addMessage }: ContactProps) {
     }
 
     setErrors({});
-    
-    // Dispatch message payload to persistent layout
-    addMessage({
-      name,
-      email,
-      phone,
-      service,
-      message
-    });
+    addMessage({ name, email, phone, service, message });
 
-    // Fire-and-forget notifications (non-blocking; failures tolerated, e.g. local dev)
-    // 1) Email via Netlify Forms (AJAX submission; dashboard email notification)
     fetch('/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ 'form-name': 'contact', name, email, phone, service, message }).toString(),
     }).catch(() => {});
-    // 2) Telegram bot via Netlify Function (token stays server-side, never in the bundle)
     fetch('/.netlify/functions/notify-telegram', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -95,8 +85,7 @@ export default function Contact({ biography, addMessage }: ContactProps) {
       `*Mensaje:* ${message}\n\n` +
       `Te contacto desde el sitio web oficial. ¡Quedo atento rta!`
     );
-    const whatsappLink = `https://wa.me/${cleanPhoneStr(biography.whatsapp)}?text=${formattedText}`;
-    window.open(whatsappLink, '_blank');
+    window.open(`https://wa.me/${cleanPhoneStr(biography.whatsapp)}?text=${formattedText}`, '_blank');
   };
 
   const handleResetForm = () => {
@@ -109,190 +98,199 @@ export default function Contact({ biography, addMessage }: ContactProps) {
   };
 
   const fieldClass = (invalid: boolean) =>
-    `w-full bg-beige border ${invalid ? 'border-red-500' : 'border-oro/30'} px-4 py-3 font-sans text-[15px] text-ciruela placeholder:text-[#837377] focus:outline-none focus:border-wine focus:bg-white`;
+    `w-full rounded-lg bg-beige border ${invalid ? 'border-wine' : 'border-arena'} px-4 py-3 font-sans text-[15px] text-ciruela placeholder:text-malva/70 focus:outline-none focus:border-oro focus:bg-white`;
+
+  const cards = [
+    { icon: MapPin, label: 'Ubicación', value: biography.location, href: MAP_LINK },
+    { icon: Mail, label: 'Correo', value: biography.email, href: `mailto:${biography.email}` },
+    { icon: Phone, label: 'WhatsApp', value: biography.whatsapp, href: `https://wa.me/${cleanPhoneStr(biography.whatsapp)}` },
+    { icon: Clock, label: 'Horario', value: 'Con cita previa, por WhatsApp', href: undefined },
+  ];
 
   return (
-    <section id="booking" className="w-full px-6 lg:px-16 py-16 lg:py-20 bg-beige border-b border-oro/25">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-5 space-y-6">
-            <div className="space-y-2">
-              <span className="font-label text-[10px] uppercase tracking-[0.22em] text-wine font-bold">Iniciar el encargo</span>
-              <h2 className="font-serif text-4xl lg:text-5xl text-ciruela font-normal">Consulta de proyecto</h2>
-              <p className="font-sans text-[15px] leading-6 text-malva">
-                El estudio toma un número limitado de sistemas de marca y producciones por trimestre, para cuidar el oficio.
-              </p>
-            </div>
+    <section id="booking" className="w-full bg-marfil px-6 py-16 lg:px-16 lg:py-20">
+      <div className="mb-10 max-w-2xl">
+        <h2 className="font-sans text-sm font-semibold uppercase tracking-[0.22em] text-ciruela">Contacto</h2>
+        <div className="mt-3 h-[3px] w-16 bg-oro" />
+        <p className="mt-4 font-sans text-[15px] leading-7 text-malva">
+          Las consultas las revisa Miranda directamente. Base en Esparza, con cobertura en todo Costa Rica.
+        </p>
+      </div>
 
-            {/* List entries */}
-            <div className="p-5 bg-marfil border-l-4 border-wine border-y border-r border-oro/35 space-y-3 shadow-sm">
-              <span className="font-label text-[10px] uppercase tracking-[0.2em] text-wine font-bold block">Respuesta del atelier</span>
-              <p className="text-[13px] leading-5 text-ciruela">
-                Las consultas las revisa Miranda directamente. Las propuestas claras reciben respuesta para coordinar una conversación.
-              </p>
-              <div className="pt-1 flex items-center gap-3 text-[13px] text-bosque font-semibold">
-                <Clock className="w-4 h-4" />
-                <span>WhatsApp {biography.whatsapp}</span>
-              </div>
-            </div>
-            <div className="space-y-2 bg-arena border border-oro/40 p-4">
-              <span className="font-label text-[10px] uppercase tracking-[0.2em] text-ciruela font-bold block">Telégrafo del estudio</span>
-              <p className="font-sans text-[15px] text-wine font-semibold">{biography.email}</p>
-              <p className="text-[13px] text-malva flex items-center gap-2"><MapPin className="w-3.5 h-3.5" />{biography.location}</p>
-            </div>
+      <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2">
+        <div className="relative min-h-[460px] overflow-hidden rounded-2xl border border-arena bg-beige shadow-sm lg:row-span-2 lg:min-h-[640px]">
+          <iframe
+            title="Mapa de Esparza, Puntarenas"
+            src={MAP_EMBED}
+            className="absolute inset-0 h-full w-full border-0"
+            allowFullScreen
+            loading="eager"
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {cards.map((card) => {
+            const Icon = card.icon;
+            const body = (
+              <>
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-champagne/70 text-wine">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <span className="mt-3 block font-sans text-sm font-semibold text-ciruela">{card.label}</span>
+                <span className="mt-1 block text-[13px] leading-5 text-malva">{card.value}</span>
+              </>
+            );
+            const className = 'rounded-2xl border border-arena bg-white p-5 shadow-sm';
+            return card.href ? (
+              <a key={card.label} href={card.href} target={card.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className={className}>
+                {body}
+              </a>
+            ) : (
+              <div key={card.label} className={className}>{body}</div>
+            );
+          })}
+        </div>
+
+        <div className="rounded-2xl border border-arena bg-white p-6 shadow-sm sm:p-8">
+          <div className="mb-6 border-l-4 border-oro pl-4">
+            <h3 className="font-serif text-2xl text-ciruela">Escribinos</h3>
+            <p className="mt-1 text-[13px] leading-5 text-malva">Miranda lee cada mensaje de forma directa.</p>
           </div>
 
-          <div className="lg:col-span-7 bg-marfil border border-oro/35 p-6 sm:p-8 shadow-xl">
-            
-            <AnimatePresence mode="wait">
-              {!submitted ? (
-                <motion.form
-                  key="contact-form"
-                  name="contact"
-                  data-netlify="true"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  onSubmit={handleSubmit}
-                  className="space-y-6"
-                >
-                  <input type="hidden" name="form-name" value="contact" />
-                  <div className="flex flex-col space-y-1">
-                    <h4 className="font-serif text-2xl text-ciruela">El briefing</h4>
-                    <p className="text-[13px] text-malva">Miranda lee cada mensaje de forma directa.</p>
-                  </div>
-
-                  {/* Form fields */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Full Name */}
-                    <div className="space-y-1.5">
-                      <label className="font-label text-[10px] uppercase tracking-[0.18em] text-malva font-semibold block">Nombre</label>
-                      <input
-                        type="text"
-                        name="name"
-                        placeholder="Ej: Sofía Quesada"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className={fieldClass(!!errors.name)}
-                      />
-                      {errors.name && <span className="text-[10px] text-red-600 block">{errors.name}</span>}
-                    </div>
-
-                    {/* Email */}
-                    <div className="space-y-1.5">
-                      <label className="font-label text-[10px] uppercase tracking-[0.18em] text-malva font-semibold block">Correo</label>
-                      <input
-                        type="email"
-                        name="email"
-                        placeholder="ejemplo@correo.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className={fieldClass(!!errors.email)}
-                      />
-                      {errors.email && <span className="text-[10px] text-red-600 block">{errors.email}</span>}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Phone WhatsApp number */}
-                    <div className="space-y-1.5">
-                      <label className="font-label text-[10px] uppercase tracking-[0.18em] text-malva font-semibold block">WhatsApp</label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        placeholder="Ej: +506 88888888"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className={fieldClass(!!errors.phone)}
-                      />
-                      {errors.phone && <span className="text-[10px] text-red-600 block">{errors.phone}</span>}
-                    </div>
-
-                    {/* Service type select box */}
-                    <div className="space-y-1.5">
-                      <label className="font-label text-[10px] uppercase tracking-[0.18em] text-malva font-semibold block">Especialidad</label>
-                      <select
-                        name="service"
-                        value={service}
-                        onChange={(e) => setService(e.target.value)}
-                        className="w-full bg-beige border border-oro/30 focus:border-wine focus:bg-white focus:outline-none px-4 py-3 text-[15px] text-ciruela font-sans cursor-pointer"
-                      >
-                        {servicesList.map(ser => (
-                          <option key={ser} value={ser} className="bg-white text-zinc-900">
-                            {ser}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Body Message */}
+          <AnimatePresence mode="wait">
+            {!submitted ? (
+              <motion.form
+                key="contact-form"
+                name="contact"
+                data-netlify="true"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onSubmit={handleSubmit}
+                className="space-y-4"
+              >
+                <input type="hidden" name="form-name" value="contact" />
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <label className="font-label text-[10px] uppercase tracking-[0.18em] text-malva font-semibold block">Brief y objetivos</label>
-                    <textarea
-                      name="message"
-                      rows={5}
-                      placeholder="Contá el horizonte estético, los tiempos y lo que la marca necesita lograr..."
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      className={`${fieldClass(!!errors.message)} resize-none`}
+                    <label className="sr-only" htmlFor="contact-name">Nombre</label>
+                    <input
+                      id="contact-name"
+                      type="text"
+                      name="name"
+                      placeholder="Tu nombre"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className={fieldClass(!!errors.name)}
                     />
-                    {errors.message && <span className="text-[10px] text-red-600 block">{errors.message}</span>}
+                    {errors.name && <span className="block text-[11px] text-wine">{errors.name}</span>}
                   </div>
+                  <div className="space-y-1.5">
+                    <label className="sr-only" htmlFor="contact-email">Correo</label>
+                    <input
+                      id="contact-email"
+                      type="email"
+                      name="email"
+                      placeholder="Tu correo"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className={fieldClass(!!errors.email)}
+                    />
+                    {errors.email && <span className="block text-[11px] text-wine">{errors.email}</span>}
+                  </div>
+                </div>
 
-                  {/* Submit buttons */}
-                  <div className="pt-4 flex flex-col sm:flex-row gap-3">
-                    <button
-                      type="submit"
-                      className="w-full py-4 bg-bosque hover:bg-verde text-champagne border border-[#2D5A46] font-label text-[10px] uppercase tracking-[0.2em] font-bold shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <label className="sr-only" htmlFor="contact-phone">WhatsApp</label>
+                    <input
+                      id="contact-phone"
+                      type="tel"
+                      name="phone"
+                      placeholder="WhatsApp"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className={fieldClass(!!errors.phone)}
+                    />
+                    {errors.phone && <span className="block text-[11px] text-wine">{errors.phone}</span>}
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="sr-only" htmlFor="contact-service">Especialidad</label>
+                    <select
+                      id="contact-service"
+                      name="service"
+                      value={service}
+                      onChange={(e) => setService(e.target.value)}
+                      className="w-full cursor-pointer rounded-lg border border-arena bg-beige px-4 py-3 font-sans text-[15px] text-ciruela focus:border-oro focus:bg-white focus:outline-none"
                     >
-                      <Send className="w-4 h-4 shrink-0" />
-                      <span>Enviar briefing</span>
-                    </button>
+                      {servicesList.map((item) => (
+                        <option key={item} value={item}>{item}</option>
+                      ))}
+                    </select>
                   </div>
+                </div>
 
-                  <div className="text-malva flex items-center gap-2 text-[12px]">
-                    <ShieldCheck className="w-3.5 h-3.5 text-bosque" />
-                    <span>Los datos no se comparten ni se venden.</span>
-                  </div>
-                </motion.form>
-              ) : (
-                <motion.div
-                  key="contact-success"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="space-y-8 text-center py-8"
+                <div className="space-y-1.5">
+                  <label className="sr-only" htmlFor="contact-message">Mensaje</label>
+                  <textarea
+                    id="contact-message"
+                    name="message"
+                    rows={5}
+                    placeholder="Mensaje"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className={`${fieldClass(!!errors.message)} resize-none`}
+                  />
+                  {errors.message && <span className="block text-[11px] text-wine">{errors.message}</span>}
+                </div>
+
+                <button
+                  type="submit"
+                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-bosque px-6 py-3.5 font-label text-[11px] font-semibold uppercase tracking-[0.16em] text-champagne hover:bg-verde"
                 >
-                  <div className="inline-flex p-4 bg-bosque text-champagne">
-                    <CheckCircle className="w-10 h-10" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="font-serif text-3xl text-ciruela">Briefing recibido</h3>
-                    <p className="text-sm text-malva max-w-md mx-auto">
-                      Gracias {name}. El mensaje quedó en el buzón de Mirix Studio CR.
-                    </p>
-                  </div>
-                  <div className="bg-beige border border-oro/35 p-6 text-center max-w-md mx-auto space-y-4">
-                    <p className="text-[13px] text-malva">Si querés acelerar la respuesta, el mismo briefing puede ir por WhatsApp.</p>
-                    <button
-                      onClick={handleSendWhatsAppBackup}
-                      className="w-full py-3.5 bg-oro text-ciruela font-label text-[10px] tracking-[0.16em] uppercase font-bold cursor-pointer"
-                    >
-                      Escribir por WhatsApp
-                    </button>
-                  </div>
-                  <button
-                    onClick={handleResetForm}
-                    className="font-label text-[10px] uppercase tracking-[0.16em] text-wine cursor-pointer"
-                  >
-                    Enviar otra consulta
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-          </div>
-
+                  <Send className="h-4 w-4" />
+                  Enviar mensaje
+                </button>
+                <p className="flex items-center gap-2 text-[12px] text-malva">
+                  <ShieldCheck className="h-3.5 w-3.5 text-bosque" />
+                  Los datos no se comparten ni se venden.
+                </p>
+              </motion.form>
+            ) : (
+              <motion.div
+                key="contact-success"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                className="space-y-6 py-4 text-center"
+              >
+                <div className="inline-flex bg-bosque p-4 text-champagne">
+                  <CheckCircle className="h-10 w-10" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-serif text-3xl text-ciruela">Mensaje recibido</h3>
+                  <p className="mx-auto max-w-md text-sm text-malva">
+                    Gracias {name}. El mensaje quedó en el buzón de Mirix Studio CR.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleSendWhatsAppBackup}
+                  className="w-full cursor-pointer bg-oro py-3.5 font-label text-[10px] font-bold uppercase tracking-[0.16em] text-ciruela"
+                >
+                  Escribir por WhatsApp
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResetForm}
+                  className="cursor-pointer font-label text-[10px] uppercase tracking-[0.16em] text-wine"
+                >
+                  Enviar otra consulta
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );
