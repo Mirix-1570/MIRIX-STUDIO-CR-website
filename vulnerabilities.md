@@ -41,7 +41,7 @@ Riesgo que sigue abierto: no hay límite de intentos ni captcha. Alguien puede l
 
 ## Dependencias
 
-El build usa React, Vite, Firebase y Motion. `package.json` fija `protobufjs` en 7.6.5 o superior por un aviso conocido de esa librería. Conviene revisar `npm audit` antes de cada deploy y actualizar solo con el sitio probado después.
+El build usa React, Vite, Firebase y Motion. `package.json` fija `protobufjs` en 7.6.5 o superior y `proxy-addr` en 2.0.8. Esa segunda versión cierra el aviso de suplantación de IP que Express 4.22.2 arrastraba con la 2.0.7. Conviene revisar `npm audit` antes de cada deploy y actualizar solo con el sitio probado después.
 
 ## Qué revisar en cada deploy
 
