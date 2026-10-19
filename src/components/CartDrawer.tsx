@@ -67,7 +67,7 @@ export default function CartDrawer({
             animate={{ opacity: 0.6 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-55 bg-black"
+            className="fixed inset-0 z-[65] bg-ciruela"
           />
 
           {/* Drawer layout */}
@@ -76,7 +76,7 @@ export default function CartDrawer({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed inset-y-0 right-0 z-55 w-full max-w-md bg-zinc-950 border-l border-zinc-900 shadow-2xl p-6 flex flex-col justify-between text-white"
+            className="fixed inset-y-0 right-0 z-[70] w-full max-w-md bg-ciruela border-l border-oro/30 shadow-2xl p-6 flex flex-col justify-between text-marfil"
           >
             
             {/* Header controls bar */}
@@ -200,7 +200,7 @@ export default function CartDrawer({
                 className={`w-full py-4 text-center font-sans font-bold text-xs tracking-widest uppercase rounded-sm flex items-center justify-center space-x-2 transition-all cursor-pointer ${
                   cart.length === 0
                     ? 'bg-zinc-900 text-zinc-600 cursor-not-allowed border border-zinc-950'
-                    : 'bg-white text-black hover:bg-zinc-200'
+                    : 'bg-oro text-ciruela hover:bg-oro-calido'
                 }`}
               >
                 <MessageSquare className="w-4 h-4 shrink-0" />

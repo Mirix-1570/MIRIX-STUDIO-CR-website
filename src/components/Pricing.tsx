@@ -4,8 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { Check, ArrowRight, Asterisk, CircleCheck, Sparkles, MessageSquare, Briefcase } from 'lucide-react';
+import { CheckCircle2, Circle, Gem, Sparkles } from 'lucide-react';
 import { ServicePlan } from '../types';
 
 interface PricingProps {
@@ -17,11 +16,9 @@ interface PricingProps {
 
 export default function Pricing({ plans, biography }: PricingProps) {
   const [currency, setCurrency] = useState<'CRC' | 'USD'>('CRC');
-  
-  // Approximate conversion rate CRC to USD: 1 USD = 515 CRC
   const CONVERSION_RATE = 515;
 
-  const formatPrice = (price: number, planCurrency: 'CRC' | 'USD') => {
+  const formatPrice = (price: number) => {
     if (currency === 'CRC') {
       return new Intl.NumberFormat('es-CR', {
         style: 'currency',
@@ -29,164 +26,152 @@ export default function Pricing({ plans, biography }: PricingProps) {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       }).format(price);
-    } else {
-      const converted = Math.round(price / CONVERSION_RATE);
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(converted);
     }
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(Math.round(price / CONVERSION_RATE));
   };
 
-  const cleanPhone = (phone: string) => {
-    return phone.replace(/[^0-9+]/g, '');
-  };
+  const cleanPhone = (phone: string) => phone.replace(/[^0-9+]/g, '');
 
   const handleSelectPlan = (plan: ServicePlan) => {
-    const formattedPrice = formatPrice(plan.price, plan.currency);
+    const formattedPrice = formatPrice(plan.price);
     const message = encodeURIComponent(
       `¡Hola Miranda! Me interesa contratar el plan *${plan.name}* (${formattedPrice} ${currency}) para mi negocio. Me gustaría agendar una reunión o coordinar la sesión. ¡Gracias!`
     );
-    const whatsappLink = `https://wa.me/${cleanPhone(biography.whatsapp)}?text=${message}`;
-    window.open(whatsappLink, '_blank');
+    window.open(`https://wa.me/${cleanPhone(biography.whatsapp)}?text=${message}`, '_blank');
   };
 
   return (
-    <section className="bg-[#FAFAFA] text-zinc-900 py-24 px-4 sm:px-6 lg:px-8 relative">
-      
-      {/* Background elements */}
-      <div className="absolute right-12 top-12 w-80 h-80 bg-neutral-200/50 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto">
-        
-        {/* Module Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <div className="inline-flex items-center space-x-2 text-xs font-semibold tracking-widest uppercase text-zinc-550 mb-2">
-            <Sparkles className="w-3.5 h-3.5 text-zinc-500" />
-            <span>TARIFAS ADAPTABLES CR</span>
-          </div>
-          
-          <h2 className="text-4xl font-serif font-light tracking-tight text-neutral-950 uppercase">
-            Planes de Pago
-          </h2>
-          
-          <p className="text-zinc-650 font-sans text-xs sm:text-sm font-light leading-relaxed max-w-xl mx-auto">
-            Paquetes desarrollados de manera justa y competitiva para el mercado de Costa Rica. Elige la solución perfecta según la etapa de tu negocio.
-          </p>
-
-          {/* Interactive Currency Selector toggle */}
-          <div className="pt-4 flex items-center justify-center space-x-3">
-            <span className={`text-xs font-semibold tracking-wider uppercase transition-colors ${currency === 'CRC' ? 'text-zinc-950 font-bold' : 'text-zinc-400'}`}>Colones (₡)</span>
-            <button
-              onClick={() => setCurrency(currency === 'CRC' ? 'USD' : 'CRC')}
-              className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-neutral-300 bg-neutral-200 transition-colors duration-200 ease-in-out focus:outline-none"
-            >
-              <span
-                className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
-                  currency === 'USD' ? 'translate-x-5' : 'translate-x-0'
-                }`}
-              />
-            </button>
-            <span className={`text-xs font-semibold tracking-wider uppercase transition-colors ${currency === 'USD' ? 'text-zinc-950 font-bold' : 'text-zinc-400'}`}>Dólares ($)</span>
-          </div>
+    <section id="retainers" className="w-full px-6 lg:px-16 py-16 lg:py-20 bg-marfil border-b border-oro/25">
+      <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-14 space-y-3">
+        <span className="font-label text-[10px] uppercase tracking-[0.22em] text-wine font-bold">
+          Acompañamiento creativo
+        </span>
+        <h2 className="font-serif text-4xl lg:text-5xl text-ciruela tracking-tight">Arquitectura de planes Mirix</h2>
+        <p className="font-sans text-[15px] leading-7 text-malva pt-1">
+          Una infraestructura creativa clara. El estudio actúa como tu departamento de dirección visual, sin la fricción de una agencia fragmentada.
+        </p>
+        <div className="pt-4 inline-flex items-center p-1 bg-arena border border-oro/40">
+          <button
+            type="button"
+            onClick={() => setCurrency('CRC')}
+            className={`px-5 py-2 font-label text-[10px] uppercase tracking-[0.18em] transition-all cursor-pointer ${
+              currency === 'CRC' ? 'bg-bosque text-champagne font-semibold' : 'text-malva hover:text-ciruela font-medium'
+            }`}
+          >
+            Colones
+          </button>
+          <button
+            type="button"
+            onClick={() => setCurrency('USD')}
+            className={`px-5 py-2 font-label text-[10px] uppercase tracking-[0.18em] transition-all cursor-pointer ${
+              currency === 'USD' ? 'bg-bosque text-champagne font-semibold' : 'text-malva hover:text-ciruela font-medium'
+            }`}
+          >
+            Dólares
+          </button>
         </div>
+      </div>
 
-        {/* 3 Columns Plans Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch pt-6">
-          {plans.map((plan, index) => {
-            const isFeatured = plan.id === 'plan-audiovisual'; // highlight middle plan as standard premium
-            
-            return (
-              <motion.div
-                key={plan.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`relative flex flex-col justify-between p-8 bg-white border transition-all duration-300 rounded-none shadow-sm ${
-                  isFeatured 
-                    ? 'border-black bg-white shadow-md shadow-zinc-200/50' 
-                    : 'border-neutral-200 hover:border-neutral-350'
-                }`}
-              >
-                {/* Featured Badge tag decor if selected */}
-                {isFeatured && (
-                  <div className="absolute -top-3.5 left-6 bg-black text-white px-3.5 py-1 text-[10px] font-bold tracking-widest uppercase rounded-none">
-                    Recomendado
-                  </div>
-                )}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+        {plans.map((plan, index) => {
+          const tier = index % 3;
+          const featured = tier === 1;
+          const couture = tier === 2;
+          const Icon = featured ? Gem : couture ? Sparkles : Circle;
 
-                {/* Plan Metadata */}
-                <div>
-                  <div className="flex justify-between items-start mb-6">
-                    <div>
-                      <h3 className="text-xl font-serif font-light tracking-tight uppercase text-zinc-950">
-                        {plan.name}
-                      </h3>
-                      <p className="text-xs text-zinc-550 mt-1.5 font-sans font-light leading-relaxed min-h-[40px]">
-                        {plan.description}
-                      </p>
-                    </div>
-                  </div>
+          return (
+            <article
+              key={plan.id}
+              className={`relative flex flex-col justify-between p-8 transition-all duration-300 ${
+                featured
+                  ? 'bg-borgona border-2 border-oro text-white shadow-2xl'
+                  : couture
+                  ? 'bg-bosque border border-[#2D5A46] text-white shadow-xl'
+                  : 'bg-white border border-oro/35 text-ciruela shadow-sm hover:shadow-xl'
+              }`}
+            >
+              {featured && (
+                <div className="absolute -top-3.5 inset-x-0 flex justify-center">
+                  <span className="px-4 py-1 bg-wine text-white border border-oro font-label text-[10px] uppercase tracking-[0.18em] font-bold shadow-md">
+                    El más solicitado
+                  </span>
+                </div>
+              )}
 
-                  {/* Pricing tag */}
-                  <div className="border-b border-neutral-200 pb-6 mb-6">
-                    <span className="text-4xl font-serif font-light tracking-tight text-neutral-950">
-                      {formatPrice(plan.price, plan.currency)}
-                    </span>
-                    <span className="text-zinc-500 text-xs font-light font-sans ml-1.5">
-                      {plan.duration}
+              <div className={`space-y-5 ${featured ? 'pt-2' : ''}`}>
+                <div className={`flex items-center justify-between border-b pb-3 ${featured ? 'border-oro/30' : couture ? 'border-[#2D5A46]' : 'border-oro/20'}`}>
+                  <div className="flex items-center gap-1.5">
+                    <Icon className={`w-3.5 h-3.5 ${featured || couture ? 'text-champagne' : 'text-wine'}`} />
+                    <span className={`font-label text-[10px] tracking-[0.2em] uppercase font-bold ${featured || couture ? 'text-champagne' : 'text-wine'}`}>
+                      Nivel 0{index + 1}
                     </span>
                   </div>
-
-                  {/* Features listing checkmarks */}
-                  <div className="space-y-4">
-                    <span className="text-[10px] font-mono tracking-widest text-zinc-450 uppercase block">Inclusiones claves</span>
-                    <ul className="space-y-3.5">
-                      {plan.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-start space-x-3 text-sm">
-                          <CircleCheck className="w-4 h-4 text-zinc-550 shrink-0 mt-0.5" />
-                          <span className="text-zinc-650 font-light font-sans leading-tight">
-                            {feature}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <span className={`font-label text-[10px] px-2 py-0.5 uppercase font-semibold ${
+                    featured
+                      ? 'bg-bosque text-mint border border-[#2D5A46]'
+                      : couture
+                      ? 'bg-borgona text-champagne border border-oro/40'
+                      : 'bg-marfil text-bosque border border-oro/30'
+                  }`}>
+                    {plan.duration}
+                  </span>
                 </div>
 
-                {/* Booking call message CTA */}
-                <div className="pt-8 mt-8 border-t border-neutral-200">
-                  <button
-                    onClick={() => handleSelectPlan(plan)}
-                    className={`w-full py-3.5 font-sans font-bold text-xs tracking-widest uppercase transition-all rounded-none cursor-pointer flex items-center justify-center space-x-2 ${
-                      isFeatured
-                        ? 'bg-black text-white hover:bg-zinc-800'
-                        : 'bg-neutral-100 border border-neutral-200 text-zinc-700 hover:bg-neutral-200 hover:text-black hover:border-neutral-300'
-                    }`}
-                  >
-                    <MessageSquare className="w-4 h-4 shrink-0" />
-                    <span>Contratar vía WhatsApp</span>
-                  </button>
-                  <p className="text-center text-[10px] text-zinc-450 mt-2 font-mono">
-                    Garantía de respuesta rápida • Costa Rica
+                <div className="space-y-1">
+                  <h3 className={`font-serif text-2xl ${featured || couture ? 'text-white' : 'text-ciruela'}`}>{plan.name}</h3>
+                  <p className={`text-[13px] leading-5 ${featured ? 'text-[#FFD9E4]' : couture ? 'text-sage' : 'text-malva'}`}>
+                    {plan.description}
                   </p>
                 </div>
-              </motion.div>
-            );
-          })}
-        </div>
 
-        {/* Informative advice note */}
-        <div className="mt-12 text-center">
-          <p className="text-zinc-500 text-xs font-mono max-w-xl mx-auto leading-relaxed">
-            * Los precios mostrados están calculados para cobertura directa en Esparza y Puntarenas centro. Para otras ubicaciones en el país, se cotiza viático adicional de forma oportuna.
-          </p>
-        </div>
+                <div className={`py-4 border-y ${featured ? 'border-oro/30' : couture ? 'border-[#2D5A46]' : 'border-oro/25'}`}>
+                  <div className="flex items-baseline gap-2">
+                    <span className={`font-serif text-4xl lg:text-5xl font-semibold leading-none ${featured || couture ? 'text-champagne' : 'text-ciruela'}`}>
+                      {formatPrice(plan.price)}
+                    </span>
+                  </div>
+                  <span className={`font-label text-[10px] uppercase tracking-wider block mt-2 ${featured ? 'text-champagne' : couture ? 'text-mint' : 'text-malva'}`}>
+                    {currency === 'CRC' ? 'Colones costarricenses' : 'Referencia en dólares'}
+                  </span>
+                </div>
 
+                <ul className={`space-y-3 text-[13px] leading-5 ${featured ? 'text-marfil' : couture ? 'text-mint' : 'text-ciruela'}`}>
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2.5">
+                      <CheckCircle2 className={`w-4 h-4 mt-0.5 shrink-0 ${featured || couture ? 'text-oro-calido' : 'text-bosque'}`} />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="pt-6">
+                <button
+                  onClick={() => handleSelectPlan(plan)}
+                  className={`w-full inline-flex items-center justify-center py-3.5 px-6 font-label text-[10px] uppercase tracking-[0.18em] font-bold text-center cursor-pointer transition-colors ${
+                    featured
+                      ? 'bg-oro hover:bg-oro-calido text-ciruela shadow-lg'
+                      : couture
+                      ? 'border-2 border-oro text-champagne hover:bg-oro hover:text-ciruela'
+                      : 'border-2 border-bosque text-bosque hover:bg-bosque hover:text-mint'
+                  }`}
+                >
+                  {featured ? 'Reservar este plan' : couture ? 'Solicitar briefing' : 'Elegir este plan'}
+                </button>
+              </div>
+            </article>
+          );
+        })}
       </div>
+
+      <p className="mt-10 text-center text-[13px] text-malva max-w-2xl mx-auto">
+        Los precios cubren Esparza y Puntarenas centro. Para otras zonas del país se cotiza el viático por separado.
+      </p>
     </section>
   );
 }

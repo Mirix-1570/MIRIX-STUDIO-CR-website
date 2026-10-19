@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, ShoppingBag, ShoppingCart, Plus, HelpCircle, Check, Eye, Trash2, ArrowRight, X } from 'lucide-react';
+import { Search, ShoppingCart, Check, Eye, X } from 'lucide-react';
 import { ShopProduct } from '../types';
 
 interface ShopProps {
@@ -46,76 +46,67 @@ export default function Shop({
   };
 
   return (
-    <section className="bg-[#FAFAFA] text-zinc-900 py-24 px-4 sm:px-6 lg:px-8 relative min-h-[85vh]">
-      <div className="max-w-7xl mx-auto">
-        
-        {/* Module Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 gap-6">
-          <div>
-            <div className="inline-flex items-center space-x-2 text-xs font-semibold tracking-widest uppercase text-zinc-550 mb-3">
-              <ShoppingBag className="w-3.5 h-3.5 animate-pulse" />
-              <span>CATÁLOGO DROPSHIPPING</span>
-            </div>
-            
-            <h2 className="text-4xl font-serif font-light tracking-tight text-neutral-950 uppercase border-b border-black/5 pb-2">
-              Galería de Productos
+    <section id="vault" className="w-full px-6 lg:px-16 py-16 lg:py-20 bg-marfil border-b border-oro/25">
+      <div className="w-full">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-10 gap-6">
+          <div className="space-y-2">
+            <span className="font-label text-[10px] uppercase tracking-[0.22em] text-wine font-bold block">
+              La bóveda del estudio
+            </span>
+            <h2 className="font-serif text-4xl lg:text-5xl text-ciruela font-normal">
+              Piezas y herramientas
             </h2>
-            <p className="text-zinc-650 font-sans text-xs sm:text-sm font-light mt-2 max-w-lg leading-relaxed">
-              Tecnología de punta y complementos estéticos en venta para fotógrafos independientes, streamers y creadores de contenido digital.
-            </p>
           </div>
-
-          {/* Quick Floating Cart indicator showing counts */}
-          <button
-            onClick={openCart}
-            className="flex items-center space-x-2.5 px-5 py-3 border border-neutral-250 bg-white rounded-none hover:border-black shadow-sm transition-all cursor-pointer self-start lg:self-end text-zinc-900"
-          >
-            <ShoppingCart className="w-4 h-4 text-zinc-800" />
-            <span className="text-xs font-semibold tracking-widest uppercase text-zinc-800">Mi Carrito ({cart.reduce((sum, item) => sum + item.quantity, 0)})</span>
-          </button>
+          <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+            <p className="font-sans text-[15px] leading-6 text-malva max-w-md">
+              Equipo y accesorios para creadores: estabilizadores, luz, audio y piezas que usa el estudio en producción.
+            </p>
+            <button
+              onClick={openCart}
+              className="shrink-0 inline-flex items-center gap-2 px-5 py-3 border border-oro/40 bg-white hover:bg-beige text-ciruela font-label text-[10px] uppercase tracking-[0.16em] cursor-pointer"
+            >
+              <ShoppingCart className="w-4 h-4" />
+              Carrito ({cart.reduce((sum, item) => sum + item.quantity, 0)})
+            </button>
+          </div>
         </div>
 
         {/* Filters and Search utilities */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-10 items-center">
-          
-          {/* Text search Bar */}
           <div className="md:col-span-4 relative">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-zinc-400" />
+              <Search className="h-4 w-4 text-malva" />
             </span>
             <input
               type="text"
-              placeholder="Buscar equipamiento..."
+              placeholder="Buscar en la bóveda..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-3 bg-white border border-neutral-250 focus:border-black focus:outline-none rounded-none text-sm text-zinc-900 placeholder-zinc-450 transition-colors font-sans shadow-sm"
+              className="w-full pl-9 pr-4 py-3 bg-beige border border-oro/30 focus:border-wine focus:bg-white focus:outline-none text-sm text-ciruela placeholder:text-[#837377] font-sans"
             />
           </div>
-
-          {/* Category caps selection */}
           <div className="md:col-span-8 flex flex-wrap gap-1.5 md:justify-end">
             {categories.map(cat => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-none text-xs font-semibold tracking-wider uppercase transition-all duration-200 cursor-pointer border ${
+                className={`px-4 py-2 font-label text-[10px] uppercase tracking-[0.14em] transition-colors cursor-pointer border ${
                   selectedCategory === cat
-                    ? 'bg-black text-white border-black shadow-sm'
-                    : 'bg-white text-zinc-550 hover:text-black border-neutral-200 hover:border-black shadow-sm'
+                    ? 'bg-bosque text-champagne border-[#2D5A46]'
+                    : 'bg-arena text-malva border-oro/30 hover:text-ciruela hover:bg-[#F3ECE0]'
                 }`}
               >
-                {cat === 'all' ? 'Ver Todos' : cat}
+                {cat === 'all' ? 'Todo' : cat}
               </button>
             ))}
           </div>
-
         </div>
 
         {/* Products Display Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {filteredProducts.map(product => {
             const quantityInCart = getFriendlyQuantityInCart(product.id);
-            
+
             return (
               <motion.div
                 layout
@@ -123,93 +114,79 @@ export default function Shop({
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="group relative flex flex-col justify-between bg-white border border-neutral-250 p-4 rounded-none hover:border-neutral-450 transition-all duration-300 shadow-sm"
+                className="group bg-white border border-oro/35 p-4 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between gap-4"
               >
-                {/* Product Image Frame */}
-                <div className="relative aspect-square w-full bg-neutral-100 overflow-hidden rounded-none mb-4 border border-neutral-100">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover grayscale opacity-85 group-hover:grayscale-0 group-hover:scale-102 transition-all duration-700 ease-out select-none"
-                  />
-                  
-                  {/* Category overlay tags */}
-                  <div className="absolute top-3 left-3 bg-white/90 px-2.5 py-1 text-[9px] font-semibold tracking-widest text-zinc-800 uppercase rounded-none border border-neutral-200 shadow-sm">
-                    {product.category}
-                  </div>
-
-                  {/* Stock flag */}
-                  {!product.inStock && (
-                    <div className="absolute inset-0 bg-white/90 backdrop-blur-xs flex items-center justify-center">
-                      <span className="text-[10px] font-bold tracking-widest uppercase bg-black text-white px-4 py-2 rounded-none">Agotado</span>
+                <div className="space-y-3">
+                  <div className="relative overflow-hidden aspect-[16/10] bg-bosque border border-oro/25">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute top-2 left-2 bg-wine text-champagne px-2 py-0.5 border border-oro/40">
+                      <span className="font-label text-[9px] uppercase tracking-[0.16em] font-bold">{product.category}</span>
                     </div>
-                  )}
+                    {!product.inStock && (
+                      <div className="absolute inset-0 bg-marfil/90 flex items-center justify-center">
+                        <span className="font-label text-[10px] uppercase tracking-[0.16em] bg-ciruela text-champagne px-4 py-2">Agotado</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-serif text-[19px] leading-snug text-ciruela group-hover:text-wine transition-colors">
+                      {product.name}
+                    </h3>
+                    <p className="text-[13px] leading-5 text-malva line-clamp-2">{product.description}</p>
+                  </div>
                 </div>
-
-                {/* Details text panel */}
-                <div className="space-y-2 flex-grow">
-                  <h3 className="text-sm font-serif font-light tracking-tight text-neutral-950 uppercase group-hover:text-black transition-colors line-clamp-1">
-                    {product.name}
-                  </h3>
-                  
-                  <span className="block text-lg font-serif font-light text-zinc-950">
+                <div className="pt-3 border-t border-oro/25 flex items-center justify-between gap-2">
+                  <span className="font-serif text-2xl text-ciruela font-semibold">
                     {new Intl.NumberFormat('es-CR', {
                       style: 'currency',
                       currency: 'CRC',
                       minimumFractionDigits: 0,
                     }).format(product.price)}
                   </span>
-                  
-                  <p className="text-xs text-zinc-500 font-sans font-light leading-relaxed line-clamp-2">
-                    {product.description}
-                  </p>
-                </div>
-
-                {/* Action buttons bar */}
-                <div className="pt-4 border-t border-neutral-150 mt-4 flex items-center gap-2">
-                  <button
-                    onClick={() => setDetailedProduct(product)}
-                    className="p-3 bg-neutral-100 border border-neutral-200 hover:text-black text-zinc-500 hover:bg-neutral-200 rounded-none transition-colors cursor-pointer"
-                    title="Ver Detalles de Producto"
-                  >
-                    <Eye className="w-4 h-4" />
-                  </button>
-
-                  <button
-                    onClick={() => product.inStock && addToCart(product)}
-                    disabled={!product.inStock}
-                    className={`flex-1 py-3 text-center font-sans font-bold text-[10px] tracking-widest uppercase transition-colors rounded-none flex items-center justify-center space-x-1.5 cursor-pointer ${
-                      !product.inStock
-                        ? 'bg-neutral-100 text-zinc-400 cursor-not-allowed border border-neutral-205'
-                        : quantityInCart > 0
-                        ? 'bg-black text-white hover:bg-zinc-800'
-                        : 'bg-neutral-100 hover:bg-neutral-250 text-zinc-800 border border-neutral-250'
-                    }`}
-                  >
-                    <Plus className="w-3.5 h-3.5 animate-pulse" />
-                    <span>
-                      {quantityInCart > 0 ? `En Carrito (${quantityInCart})` : 'Añadir'}
-                    </span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setDetailedProduct(product)}
+                      className="p-2 border border-oro/40 text-malva hover:text-ciruela cursor-pointer"
+                      title="Ver detalle"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => product.inStock && addToCart(product)}
+                      disabled={!product.inStock}
+                      className={`px-4 py-2 font-label text-[10px] uppercase tracking-[0.14em] font-bold transition-colors cursor-pointer ${
+                        !product.inStock
+                          ? 'bg-arena text-malva cursor-not-allowed'
+                          : quantityInCart > 0
+                          ? 'bg-oro text-ciruela hover:bg-oro-calido'
+                          : 'bg-bosque hover:bg-verde text-champagne border border-[#2D5A46]'
+                      }`}
+                    >
+                      {quantityInCart > 0 ? `En carrito (${quantityInCart})` : 'Agregar'}
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             );
           })}
         </div>
 
-        {/* Empty list search */}
         {filteredProducts.length === 0 && (
-          <div className="text-center py-24 border border-dashed border-neutral-205 rounded-none bg-white">
-            <p className="text-zinc-500 font-sans text-sm mb-2">No se encontraron productos que coincidan con los filtros.</p>
+          <div className="text-center py-20 border border-dashed border-oro/40 bg-white">
+            <p className="text-malva font-sans text-sm mb-2">No hay piezas con ese filtro.</p>
             <button
               onClick={() => {
                 setSearchTerm('');
                 setSelectedCategory('all');
               }}
-              className="text-xs font-semibold tracking-wider uppercase text-zinc-950 hover:underline cursor-pointer"
+              className="font-label text-[10px] uppercase tracking-[0.16em] text-wine cursor-pointer"
             >
-              Restablecer Filtros
+              Restablecer
             </button>
           </div>
         )}
@@ -223,55 +200,46 @@ export default function Shop({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6"
+            className="fixed inset-0 z-[60] bg-ciruela/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-2xl bg-white border border-neutral-255 rounded-none overflow-hidden p-6 sm:p-8 relative shadow-2xl text-zinc-900"
+              className="w-full max-w-2xl bg-marfil border border-oro/35 overflow-hidden p-6 sm:p-8 relative shadow-2xl text-ciruela"
             >
               <button
                 onClick={() => setDetailedProduct(null)}
-                className="absolute top-4 right-4 p-2 bg-[#FAFAFA] text-zinc-550 hover:text-black hover:bg-neutral-100 rounded-full border border-neutral-200 transition-all cursor-pointer shadow-sm"
+                className="absolute top-4 right-4 p-2 bg-beige text-malva hover:text-ciruela border border-oro/30 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
 
               <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                {/* Image */}
-                <div className="md:col-span-5 bg-neutral-100 aspect-square rounded-none border border-neutral-200 overflow-hidden max-h-[250px]">
+                <div className="md:col-span-5 bg-bosque aspect-square border border-oro/25 overflow-hidden max-h-[250px]">
                   <img
                     src={detailedProduct.image}
                     alt={detailedProduct.name}
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover grayscale select-none"
+                    className="w-full h-full object-cover"
                   />
                 </div>
-
-                {/* Info Text details */}
                 <div className="md:col-span-7 space-y-4">
                   <div className="space-y-1">
-                    <span className="text-[9px] font-mono tracking-widest text-zinc-500 uppercase block">{detailedProduct.category}</span>
-                    <h3 className="text-xl font-serif font-light tracking-tight text-neutral-950 uppercase">{detailedProduct.name}</h3>
+                    <span className="font-label text-[10px] tracking-[0.18em] text-wine uppercase block">{detailedProduct.category}</span>
+                    <h3 className="font-serif text-2xl text-ciruela">{detailedProduct.name}</h3>
                   </div>
-
-                  <span className="block text-2xl font-serif font-light text-black">
+                  <span className="block font-serif text-3xl text-ciruela">
                     {new Intl.NumberFormat('es-CR', {
                       style: 'currency',
                       currency: 'CRC',
                       minimumFractionDigits: 0,
                     }).format(detailedProduct.price)}
                   </span>
-
-                  <p className="text-xs text-zinc-650 font-sans font-light leading-relaxed">
-                    {detailedProduct.description}
-                  </p>
-
-                  <div className="bg-neutral-50 px-4 py-3 border border-neutral-200 rounded-none flex items-center space-x-2 text-[11px] text-zinc-650">
-                    <Check className="w-3.5 h-3.5 text-zinc-800" />
-                    <span>Modalidad Dropshipping: Envío directo y seguro para todo Costa Rica.</span>
+                  <p className="text-sm text-malva font-light leading-relaxed">{detailedProduct.description}</p>
+                  <div className="bg-beige px-4 py-3 border border-oro/30 flex items-center gap-2 text-[13px] text-bosque">
+                    <Check className="w-3.5 h-3.5" />
+                    <span>Envío coordinado a todo Costa Rica.</span>
                   </div>
-
-                  <div className="pt-4 flex gap-2">
+                  <div className="pt-2 flex gap-2">
                     <button
                       onClick={() => {
                         if (detailedProduct.inStock) {
@@ -280,13 +248,13 @@ export default function Shop({
                         }
                       }}
                       disabled={!detailedProduct.inStock}
-                      className="flex-1 py-3 bg-black text-white font-sans font-bold text-xs tracking-widest uppercase hover:bg-zinc-805 transition-colors cursor-pointer rounded-none"
+                      className="flex-1 py-3 bg-bosque text-champagne font-label text-[10px] tracking-[0.16em] uppercase hover:bg-verde cursor-pointer"
                     >
-                      Añadir al Carrito de compra
+                      Agregar al carrito
                     </button>
                     <button
                       onClick={() => setDetailedProduct(null)}
-                      className="px-4 py-3 bg-neutral-100 border border-neutral-200 text-zinc-650 font-sans font-medium text-xs tracking-widest uppercase hover:text-black hover:bg-neutral-200 transition-colors cursor-pointer rounded-none"
+                      className="px-4 py-3 bg-arena border border-oro/30 text-ciruela font-label text-[10px] tracking-[0.16em] uppercase cursor-pointer"
                     >
                       Cerrar
                     </button>

@@ -125,7 +125,7 @@ export default function Configurator({ biography }: ConfiguratorProps) {
   const photosProgress = ((photosEdited - 5) / 75) * 100;
 
   return (
-    <section className="bg-gradient-to-b from-[#FAFAFA] to-neutral-100/50 text-zinc-900 pt-20 pb-32 lg:pb-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-200 relative overflow-hidden">
+    <section id="configurator" className="bg-beige text-ciruela pt-16 pb-20 px-6 lg:px-16 border-b border-oro/25 relative overflow-hidden">
 
       {/* Decorative background accents */}
       <div className="absolute right-0 top-0 w-96 h-96 bg-neutral-200/30 rounded-full blur-3xl pointer-events-none" />

@@ -1,11 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-serif: "Playfair Display", Georgia, serif;
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-label: "Montserrat", sans-serif;
 
-  /* Custom intermediate shades used across the site (between default steps) */
+  /* Paleta Mirix Studio CR */
+  --color-vino: #2d0618;
+  --color-borgona: #3b0d23;
+  --color-ciruela: #150008;
+  --color-bosque: #1a2e26;
+  --color-verde: #123524;
+  --color-oro: #d4af37;
+  --color-oro-calido: #e9c176;
+  --color-champagne: #ffdea5;
+  --color-marfil: #faf7f2;
+  --color-beige: #f4efe6;
+  --color-arena: #eae3d2;
+  --color-malva: #514347;
+  --color-wine: #7a1843;
+  --color-mint: #d0e8dc;
+  --color-sage: #b5ccc0;
+
   --color-zinc-350: #babac1;
   --color-zinc-450: #898994;
   --color-zinc-550: #62626b;
@@ -17,7 +34,20 @@
   --color-red-505: #e63535;
 }
 
-body {
-  background-color: #FAFAFA;
+html {
+  scroll-behavior: smooth;
 }
 
+body {
+  background-color: #faf7f2;
+  color: #150008;
+}
+
+::selection {
+  background-color: #3b0d23;
+  color: #ffdea5;
+}
+
+section[id] {
+  scroll-margin-top: 5.5rem;
+}
