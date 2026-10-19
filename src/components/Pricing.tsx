@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Check } from 'lucide-react';
 import { ServicePlan } from '../types';
 
@@ -15,13 +15,36 @@ interface PricingProps {
 }
 
 const ACTIONS = ['Elegir este plan', 'Reservar este plan', 'Solicitar briefing'];
+const EXCHANGE_URL = 'https://api.hacienda.go.cr/indicadores/tc/dolar';
 
 export default function Pricing({ plans, biography }: PricingProps) {
   const [currency, setCurrency] = useState<'CRC' | 'USD'>('CRC');
-  const CONVERSION_RATE = 515;
+  const [sellRate, setSellRate] = useState<number | null>(null);
+  const [rateError, setRateError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(EXCHANGE_URL)
+      .then((response) => {
+        if (!response.ok) throw new Error('rate');
+        return response.json() as Promise<{ venta?: { valor?: number } }>;
+      })
+      .then((data) => {
+        if (cancelled) return;
+        const value = data.venta?.valor;
+        if (!value || value <= 0) throw new Error('rate');
+        setSellRate(value);
+      })
+      .catch(() => {
+        if (!cancelled) setRateError(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const formatPrice = (price: number) => {
-    if (currency === 'CRC') {
+    if (currency === 'CRC' || !sellRate) {
       return new Intl.NumberFormat('es-CR', {
         style: 'currency',
         currency: 'CRC',
@@ -34,7 +57,7 @@ export default function Pricing({ plans, biography }: PricingProps) {
       currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(Math.round(price / CONVERSION_RATE));
+    }).format(Math.round(price / sellRate));
   };
 
   const cleanPhone = (phone: string) => phone.replace(/[^0-9+]/g, '');
@@ -79,13 +102,24 @@ export default function Pricing({ plans, biography }: PricingProps) {
             <button
               type="button"
               onClick={() => setCurrency('USD')}
-              className={`cursor-pointer px-6 py-2.5 font-label text-[11px] uppercase tracking-[0.18em] transition-colors ${
+              disabled={rateError || !sellRate}
+              className={`cursor-pointer px-6 py-2.5 font-label text-[11px] uppercase tracking-[0.18em] transition-colors disabled:cursor-wait ${
                 currency === 'USD' ? 'bg-bosque font-semibold text-white' : 'bg-[#F7F1E8] font-medium text-malva'
               }`}
             >
               Dólares
             </button>
           </div>
+          {currency === 'USD' && sellRate && (
+            <p className="font-label text-[10px] uppercase tracking-[0.16em] text-champagne/90">
+              Tipo de cambio venta ₡{sellRate.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </p>
+          )}
+          {rateError && (
+            <p className="font-sans text-[13px] text-champagne">
+              No se pudo consultar el tipo de cambio de venta.
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-3 lg:gap-5">
@@ -125,7 +159,7 @@ export default function Pricing({ plans, biography }: PricingProps) {
                     {formatPrice(plan.price)}
                   </p>
                   <span className="mt-2 block font-label text-[10px] uppercase tracking-[0.16em] text-malva">
-                    {currency === 'CRC' ? 'Colones costarricenses' : 'Referencia en dólares'}
+                    {currency === 'USD' && sellRate ? 'Dólares, tipo de cambio venta' : 'Colones costarricenses'}
                   </span>
                 </div>
 
