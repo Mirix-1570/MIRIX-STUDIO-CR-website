@@ -5,16 +5,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Menu, X, ShoppingBag, Settings } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import Logo from './Logo';
 
 interface NavbarProps {
   currentTab: string;
-  setCurrentTab: (tab: string) => void;
-  cartCount: number;
-  openCart: () => void;
-  isAdminLoggedIn: boolean;
-  logoutAdmin: () => void;
   onNavigate: (target: string) => void;
 }
 
@@ -29,9 +24,6 @@ const NAV = [
 
 export default function Navbar({
   currentTab,
-  cartCount,
-  openCart,
-  isAdminLoggedIn,
   onNavigate,
 }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -71,7 +63,7 @@ export default function Navbar({
           </span>
         </div>
 
-        <nav className="hidden lg:flex items-center gap-1">
+        <nav className="hidden lg:flex flex-1 items-center justify-center gap-1">
           {NAV.map((item) => {
             const active = currentTab === 'home' && activeId === item.id;
             return (
@@ -88,38 +80,13 @@ export default function Navbar({
           })}
         </nav>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={openCart}
-            className="relative p-2 text-malva hover:text-ciruela transition-colors cursor-pointer"
-            title="Ver carrito"
-          >
-            <ShoppingBag className="w-5 h-5" />
-            {cartCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-wine text-[9px] font-bold text-champagne">
-                {cartCount}
-              </span>
-            )}
-          </button>
-
-          <button
-            onClick={() => go('admin')}
-            className={`hidden md:inline-flex p-2 transition-colors cursor-pointer ${
-              currentTab === 'admin' ? 'text-wine' : 'text-malva hover:text-ciruela'
-            }`}
-            title={isAdminLoggedIn ? 'Panel de administración' : 'Acceso de administrador'}
-          >
-            <Settings className="w-4 h-4" />
-          </button>
-
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-ciruela cursor-pointer"
-            aria-label="Abrir menú"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="lg:hidden p-2 text-ciruela cursor-pointer"
+          aria-label="Abrir menú"
+        >
+          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
       </div>
 
       <AnimatePresence>
@@ -145,12 +112,6 @@ export default function Navbar({
                   </button>
                 );
               })}
-              <button
-                onClick={() => go('admin')}
-                className="mt-1 text-left px-4 py-3 font-sans text-xs font-semibold tracking-[0.16em] uppercase text-zinc-400 cursor-pointer"
-              >
-                {isAdminLoggedIn ? 'Panel admin' : 'Admin'}
-              </button>
             </div>
           </motion.div>
         )}

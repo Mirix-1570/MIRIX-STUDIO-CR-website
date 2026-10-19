@@ -17,7 +17,6 @@ const Configurator = lazy(() => import('./components/Configurator'));
 const Shop = lazy(() => import('./components/Shop'));
 const Contact = lazy(() => import('./components/Contact'));
 const AdminPanel = lazy(() => import('./components/AdminPanel'));
-import { adminLogout } from './lib/firebase';
 import {
   FIRESTORE_CONFIGURED,
   subscribeContent,
@@ -311,11 +310,6 @@ export default function App() {
 
       <Navbar
         currentTab={currentTab}
-        setCurrentTab={setCurrentTab}
-        cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
-        openCart={() => setCartOpen(true)}
-        isAdminLoggedIn={isAdminLoggedIn}
-        logoutAdmin={() => { adminLogout(); setIsAdminLoggedIn(false); }}
         onNavigate={navigate}
       />
 
@@ -407,7 +401,7 @@ export default function App() {
                 <p className="text-mint">{biography.whatsapp}</p>
               </div>
             </div>
-            <div className="lg:col-span-4 space-y-3">
+            <div className="lg:col-span-2 space-y-3">
               <span className="font-label text-[10px] uppercase tracking-[0.2em] text-champagne font-bold block">Recorrido</span>
               <div className="flex flex-col items-start gap-2">
                 <button onClick={() => navigate('home')} className="font-sans text-xs font-semibold tracking-[0.16em] uppercase text-sage hover:text-champagne cursor-pointer">Inicio</button>
@@ -418,13 +412,19 @@ export default function App() {
                 <button onClick={() => navigate('booking')} className="font-sans text-xs font-semibold tracking-[0.16em] uppercase text-sage hover:text-champagne cursor-pointer">Contacto</button>
               </div>
             </div>
+            <div className="lg:col-span-2 space-y-3">
+              <span className="font-label text-[10px] uppercase tracking-[0.2em] text-champagne font-bold block">Información</span>
+              <div className="flex flex-col items-start gap-2">
+                <button onClick={() => navigate('privacy')} className="font-sans text-xs font-semibold tracking-[0.16em] uppercase text-sage hover:text-champagne cursor-pointer">Privacidad</button>
+                <button onClick={() => navigate('terms')} className="font-sans text-xs font-semibold tracking-[0.16em] uppercase text-sage hover:text-champagne cursor-pointer">Términos</button>
+                <button onClick={() => navigate('admin')} className="font-sans text-xs font-semibold tracking-[0.16em] uppercase text-sage hover:text-champagne cursor-pointer">Administrativo</button>
+              </div>
+            </div>
           </div>
           <div className="pt-6 border-t border-[#2D5A46] flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
               <a href={biography.instagramUrl} target="_blank" rel="noopener noreferrer" className="font-sans text-xs font-semibold tracking-[0.16em] uppercase text-sage hover:text-champagne">Instagram</a>
               <a href={biography.facebookUrl} target="_blank" rel="noopener noreferrer" className="font-sans text-xs font-semibold tracking-[0.16em] uppercase text-sage hover:text-champagne">Facebook</a>
-              <button onClick={() => navigate('privacy')} className="font-sans text-xs font-semibold tracking-[0.16em] uppercase text-sage hover:text-champagne cursor-pointer">Privacidad</button>
-              <button onClick={() => navigate('terms')} className="font-sans text-xs font-semibold tracking-[0.16em] uppercase text-sage hover:text-champagne cursor-pointer">Términos</button>
             </div>
             <span className="text-[13px] text-sage text-center">© 2026 Mirix Studio CR. Esparza, Costa Rica. Diseño de Miranda Méndez.</span>
           </div>
