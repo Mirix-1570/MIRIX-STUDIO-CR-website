@@ -1,152 +1,91 @@
-<div align="center">
-  <img width="1200" height="475" alt="MIRIX STUDIO CR" src="https://via.placeholder.com/1200x475/000000/FFFFFF?text=MIRIX+STUDIO+CR" />
-</div>
+# Mirix Studio CR
 
-# MIRIX STUDIO CR - Sitio Web
+Sitio de **Mirix Studio CR**, estudio de producción audiovisual, fotografía y diseño con base en Esparza, Puntarenas, y cobertura en Costa Rica. Fundado por Miranda Méndez.
 
-Sitio web profesional para **MIRIX STUDIO CR**, estudio de producción audiovisual y fotografía artística ubicado en Esparza, Costa Rica.
+Sitio publicado: [https://mirixstudiocr.netlify.app/](https://mirixstudiocr.netlify.app/)
 
-## 🎬 Servicios
+## Qué incluye
 
-- **Producción de Video** - Grabaciones en alta definición, reels de tendencia
-- **Fotografía Artística** - Retratos, arquitectura, diseño interior, productos
-- **Gestión de Redes Sociales** - Contenido estratégico y gestión profesional
+- Inicio con la foto del estudio.
+- Sección «Quiénes somos» con la biografía de Miranda Méndez.
+- Carrusel «Mi inspiración», armado con las fotos de `public/Carousel`.
+- Portafolio de fotografía, video y diseño.
+- Planes en colones y en dólares, con el tipo de cambio de venta del BCCR vía API de Hacienda.
+- Cotizador personalizado.
+- Contacto con mapa de Esparza, datos reales y formulario.
+- Pie de página con privacidad, términos y acceso administrativo.
+- Panel de administración con Firebase.
 
-## 🚀 Tecnologías
+## Tecnologías
 
-- **React 19** - Biblioteca de interfaz de usuario
-- **TypeScript** - Tipado estático
-- **Vite** - Build tool y dev server
-- **Tailwind CSS** - Framework de estilos
-- **Motion (Framer Motion)** - Animaciones
-- **Lucide React** - Iconos
-- **Express** - Servidor backend (opcional)
+- React 19 y TypeScript.
+- Vite 6 con alias `@` al raíz del proyecto.
+- Tailwind CSS 4 y `@tailwindcss/vite`.
+- Motion 12 para animaciones.
+- Firebase 12 Auth y Firestore.
+- Netlify (formulario de contacto con Netlify Forms y aviso por Telegram).
+- Node.js 18 o superior y npm.
 
-## 📋 Prerrequisitos
+## Requisitos
 
-- Node.js (v18 o superior)
-- npm o yarn
+- Node.js 18 o superior.
+- npm.
 
-## 🔧 Instalación y Configuración
+## Puesta en marcha
 
-1. **Clonar el repositorio:**
-   ```bash
-   git clone <repository-url>
-   cd MIRIX-STUDIO-CR-website
-   ```
-
-2. **Instalar dependencias:**
-   ```bash
-   npm install
-   ```
-
-3. **Ejecutar en desarrollo:**
-   ```bash
-   npm run dev
-   ```
-
-   El servidor se iniciará en `http://localhost:3000`
-
-4. **Build para producción:**
-   ```bash
-   npm run build
-   ```
-
-5. **Preview del build:**
-   ```bash
-   npm run preview
-   ```
-
-## 📁 Estructura del Proyecto
-
-```
-MIRIX-STUDIO-CR-website/
-├── src/
-│   ├── components/          # Componentes React
-│   │   ├── Navbar.tsx
-│   │   ├── Hero.tsx
-│   │   ├── Portfolio.tsx
-│   │   ├── Pricing.tsx
-│   │   ├── About.tsx
-│   │   ├── Shop.tsx
-│   │   ├── Contact.tsx
-│   │   ├── AdminPanel.tsx
-│   │   └── CartDrawer.tsx
-│   ├── App.tsx              # Componente principal
-│   ├── main.tsx             # Punto de entrada
-│   ├── index.css            # Estilos globales
-│   ├── data.ts              # Datos iniciales y persistencia
-│   └── types.ts             # Definiciones TypeScript
-├── public/                  # Archivos estáticos
-├── assets/                  # Imágenes y recursos
-├── package.json
-├── vite.config.ts
-├── tsconfig.json
-└── index.html
+```bash
+npm install
+npm run dev
 ```
 
-## 🎨 Características
+El sitio queda en `http://localhost:3000`.
 
-- ✅ Diseño minimalista y elegante
-- ✅ Totalmente responsive (mobile-first)
-- ✅ Animaciones suaves con Motion
-- ✅ Carrito de compras persistente (localStorage)
-- ✅ Panel de administración
-- ✅ Gestión de contenido dinámico
-- ✅ Portafolio interactivo
-- ✅ Tienda en línea
-- ✅ Formulario de contacto
-- ✅ Persistencia de datos en localStorage
+Copia `.env.example` a `.env` y completa los valores de Firebase. El token de Telegram no va en ese archivo: se configura en Netlify, como variables `TELEGRAM_BOT_TOKEN` y `TELEGRAM_CHAT_ID`. Después de añadir o cambiar esas variables, despliega de nuevo en Netlify para que la función las tome.
 
-## 🛠️ Scripts Disponibles
+## Scripts
 
-| Comando | Descripción |
-|---------|-------------|
-| `npm run dev` | Inicia servidor de desarrollo en puerto 3000 |
-| `npm run build` | Construye la app para producción |
-| `npm run preview` | Preview del build de producción |
-| `npm run lint` | Verifica tipos TypeScript |
-| `npm run clean` | Limpia archivos de build |
+| Comando | Uso |
+|---|---|
+| `npm run dev` | Desarrollo en el puerto 3000 (`0.0.0.0`). |
+| `npm run build` | Build de producción en `dist/`. |
+| `npm run preview` | Vista previa del build localmente. |
+| `npm run lint` | Revisión de tipos con `tsc --noEmit`. |
+| `npm run clean` | Elimina `dist/` y `server.js`. |
 
-## 📝 Notas de Desarrollo
+## Estructura
 
-- El proyecto usa **React 19** con la nueva API de `createRoot`
-- Los datos se persisten en **localStorage** del navegador
-- El panel de admin requiere login (ver `AdminPanel.tsx`)
-- Tailwind CSS v4 está configurado con Vite
+```
+src/
+  components/   Páginas y secciones del sitio
+  data.ts       Textos y precios iniciales (biografía, planes, portafolio, productos)
+  lib/          Firebase y Firestore
+  types.ts      Interfaces TypeScript
+public/
+  Carousel/     Fotos del carrusel. Se detectan solas al hacer build.
+  logo/         Logo, retrato y fondo de planes
+netlify/
+  functions/    Función serverless que avisa al Telegram al enviar el formulario
+firestore.rules  Permisos de la base de datos
+```
 
-## 🐛 Issues Conocidos
+El carrusel se carga de forma virtual desde `vite.config.ts`; cada imagen nueva en `public/Carousel` (jpg, jpeg, png, webp, gif o avif) entra sola en el siguiente build. No hace falta editar una lista en el código.
 
-### Issue #1: Configuración inicial del proyecto
-**Fecha:** 2026-07-31  
-**Descripción:** El archivo `main.tsx` fue identificado con contenido incompleto en la versión inicial del repositorio.  
-**Solución:** Se verificó y corrigió el archivo con la configuración correcta de React 19:
-- Imports correctos de `react` y `react-dom/client`
-- Uso de `createRoot` API (React 19)
-- Renderizado del componente `<App />`
+## Contacto real
 
-**Estado:** ✅ Resuelto
+- Esparza, Puntarenas, Costa Rica.
+- mirixstudiocr@gmail.com
+- WhatsApp +506 63105876
 
-### Issue #2: Logo no visible en Navbar
-**Fecha:** 2026-07-31  
-**Descripción:** El logo de MIRIX STUDIO CR no se mostraba en el navbar debido a un nombre de archivo con caracteres especiales (espacios y tildes) que causaba problemas en la ruta de acceso.  
-**Archivo afectado:** `src/components/Navbar.tsx`  
-**Solución:** 
-1. Se renombró el archivo de `Diseño sin título (1).png` a `logo.png` en la carpeta `public/`
-2. Se actualizó la referencia en `Navbar.tsx` de `/Diseno sin título (1).png` a `/logo.png`
-3. Se mejoró la legibilidad y mantenibilidad del código
+## Panel de administración
 
-**Archivos modificados:**
-- `public/Diseño sin título (1).png` → `public/logo.png`
-- `src/components/Navbar.tsx` (línea 49)
+Acceso solo para `mirixstudiocr@gmail.com`. En Firebase Auth se crea una cuenta con este correo; en `firestore.rules` la función `isAdmin()` restringe la escritura a ese correo. Solo el administrador puede leer, crear, editar o borrar mensajes del buzón.
 
-**Estado:** ✅ Resuelto
+## Documentos
 
-## 📄 Licencia
+- [seo.md](seo.md) — cómo está armado el posicionamiento del sitio.
+- [vulnerabilities.md](vulnerabilities.md) — riesgos conocidos y cómo están contenidos.
 
-© 2026 MIRIX STUDIO CR - Miranda Méndez Cruz  
-Esparza, Costa Rica
+## Licencia
 
----
+Código bajo licencia Apache-2.0 (visto en `src/data.ts`). El contenido del sitio es de Mirix Studio CR.
 
-**Diseñado con ❤️ en Costa Rica**

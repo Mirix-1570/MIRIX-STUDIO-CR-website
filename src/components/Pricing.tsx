@@ -3,9 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { Check, ArrowRight, Asterisk, CircleCheck, Sparkles, MessageSquare, Briefcase } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Check } from 'lucide-react';
 import { ServicePlan } from '../types';
 
 interface PricingProps {
@@ -15,177 +14,239 @@ interface PricingProps {
   };
 }
 
+const ACTIONS = ['Elegir este plan', 'Reservar este plan', 'Solicitar briefing'];
+const EXCHANGE_URL = 'https://api.hacienda.go.cr/indicadores/tc/dolar';
+
 export default function Pricing({ plans, biography }: PricingProps) {
   const [currency, setCurrency] = useState<'CRC' | 'USD'>('CRC');
-  
-  // Approximate conversion rate CRC to USD: 1 USD = 515 CRC
-  const CONVERSION_RATE = 515;
+  const [sellRate, setSellRate] = useState<number | null>(null);
+  const [rateError, setRateError] = useState(false);
 
-  const formatPrice = (price: number, planCurrency: 'CRC' | 'USD') => {
-    if (currency === 'CRC') {
+  useEffect(() => {
+    let cancelled = false;
+    fetch(EXCHANGE_URL)
+      .then((response) => {
+        if (!response.ok) throw new Error('rate');
+        return response.json() as Promise<{ venta?: { valor?: number } }>;
+      })
+      .then((data) => {
+        if (cancelled) return;
+        const value = data.venta?.valor;
+        if (!value || value <= 0) throw new Error('rate');
+        setSellRate(value);
+      })
+      .catch(() => {
+        if (!cancelled) setRateError(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const formatPrice = (price: number) => {
+    if (currency === 'CRC' || !sellRate) {
       return new Intl.NumberFormat('es-CR', {
         style: 'currency',
         currency: 'CRC',
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       }).format(price);
-    } else {
-      const converted = Math.round(price / CONVERSION_RATE);
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(converted);
     }
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(Math.round(price / sellRate));
   };
 
-  const cleanPhone = (phone: string) => {
-    return phone.replace(/[^0-9+]/g, '');
-  };
+  const cleanPhone = (phone: string) => phone.replace(/[^0-9+]/g, '');
 
   const handleSelectPlan = (plan: ServicePlan) => {
-    const formattedPrice = formatPrice(plan.price, plan.currency);
+    const formattedPrice = formatPrice(plan.price);
     const message = encodeURIComponent(
       `¡Hola Miranda! Me interesa contratar el plan *${plan.name}* (${formattedPrice} ${currency}) para mi negocio. Me gustaría agendar una reunión o coordinar la sesión. ¡Gracias!`
     );
-    const whatsappLink = `https://wa.me/${cleanPhone(biography.whatsapp)}?text=${message}`;
-    window.open(whatsappLink, '_blank');
+    window.open(`https://wa.me/${cleanPhone(biography.whatsapp)}?text=${message}`, '_blank');
   };
 
   return (
-    <section className="bg-[#FAFAFA] text-zinc-900 py-24 px-4 sm:px-6 lg:px-8 relative">
-      
-      {/* Background elements */}
-      <div className="absolute right-12 top-12 w-80 h-80 bg-neutral-200/50 rounded-full blur-3xl pointer-events-none" />
+    <section id="retainers" className="relative w-full overflow-hidden px-6 lg:px-16 py-16 lg:py-24">
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url('/logo/fondo.jpeg')" }}
+        aria-hidden="true"
+      />
 
-      <div className="max-w-7xl mx-auto">
-        
-        {/* Module Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <div className="inline-flex items-center space-x-2 text-xs font-semibold tracking-widest uppercase text-zinc-550 mb-2">
-            <Sparkles className="w-3.5 h-3.5 text-zinc-500" />
-            <span>TARIFAS ADAPTABLES CR</span>
-          </div>
-          
-          <h2 className="text-4xl font-serif font-light tracking-tight text-neutral-950 uppercase">
-            Planes de Pago
+      <div className="relative z-10">
+        <div className="mx-auto mb-12 flex max-w-3xl flex-col items-center space-y-4 text-center">
+          <span className="font-label text-[11px] font-semibold uppercase tracking-[0.32em] text-champagne">
+            Acompañamiento creativo
+          </span>
+          <h2 className="font-serif text-4xl tracking-tight text-white lg:text-6xl">
+            Arquitectura de planes Mirix
           </h2>
-          
-          <p className="text-zinc-650 font-sans text-xs sm:text-sm font-light leading-relaxed max-w-xl mx-auto">
-            Paquetes desarrollados de manera justa y competitiva para el mercado de Costa Rica. Elige la solución perfecta según la etapa de tu negocio.
+          <p className="max-w-2xl font-sans text-[15px] leading-7 text-marfil/90">
+            Una infraestructura creativa clara. El estudio actúa como tu departamento de dirección visual, sin la fricción de una agencia fragmentada.
           </p>
-
-          {/* Interactive Currency Selector toggle */}
-          <div className="pt-4 flex items-center justify-center space-x-3">
-            <span className={`text-xs font-semibold tracking-wider uppercase transition-colors ${currency === 'CRC' ? 'text-zinc-950 font-bold' : 'text-zinc-400'}`}>Colones (₡)</span>
+          <div className="inline-flex overflow-hidden rounded-md shadow-md">
             <button
-              onClick={() => setCurrency(currency === 'CRC' ? 'USD' : 'CRC')}
-              className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-neutral-300 bg-neutral-200 transition-colors duration-200 ease-in-out focus:outline-none"
+              type="button"
+              onClick={() => setCurrency('CRC')}
+              className={`cursor-pointer px-6 py-2.5 font-label text-[11px] uppercase tracking-[0.18em] transition-colors ${
+                currency === 'CRC' ? 'bg-bosque font-semibold text-white' : 'bg-[#F7F1E8] font-medium text-malva'
+              }`}
             >
-              <span
-                className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
-                  currency === 'USD' ? 'translate-x-5' : 'translate-x-0'
-                }`}
-              />
+              Colones
             </button>
-            <span className={`text-xs font-semibold tracking-wider uppercase transition-colors ${currency === 'USD' ? 'text-zinc-950 font-bold' : 'text-zinc-400'}`}>Dólares ($)</span>
+            <button
+              type="button"
+              onClick={() => setCurrency('USD')}
+              disabled={rateError || !sellRate}
+              className={`cursor-pointer px-6 py-2.5 font-label text-[11px] uppercase tracking-[0.18em] transition-colors disabled:cursor-wait ${
+                currency === 'USD' ? 'bg-bosque font-semibold text-white' : 'bg-[#F7F1E8] font-medium text-malva'
+              }`}
+            >
+              Dólares
+            </button>
           </div>
+          {currency === 'USD' && sellRate && (
+            <p className="font-label text-[10px] uppercase tracking-[0.16em] text-champagne/90">
+              Tipo de cambio venta ₡{sellRate.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </p>
+          )}
+          {rateError && (
+            <p className="font-sans text-[13px] text-champagne">
+              No se pudo consultar el tipo de cambio de venta.
+            </p>
+          )}
         </div>
 
-        {/* 3 Columns Plans Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch pt-6">
+        <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-2 xl:grid-cols-4 xl:gap-5">
           {plans.map((plan, index) => {
-            const isFeatured = plan.id === 'plan-audiovisual'; // highlight middle plan as standard premium
-            
+            const featured = index === 1;
+            const action = ACTIONS[index] ?? 'Elegir este plan';
+
             return (
-              <motion.div
+              <article
                 key={plan.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`relative flex flex-col justify-between p-8 bg-white border transition-all duration-300 rounded-none shadow-sm ${
-                  isFeatured 
-                    ? 'border-black bg-white shadow-md shadow-zinc-200/50' 
-                    : 'border-neutral-200 hover:border-neutral-350'
+                className={`relative flex flex-col bg-[#FBF8F3] px-7 pb-7 pt-6 text-ciruela shadow-xl ${
+                  featured ? 'border-2 border-oro lg:-mt-3 lg:mb-[-12px]' : 'border border-[#E7DCC8]'
                 }`}
               >
-                {/* Featured Badge tag decor if selected */}
-                {isFeatured && (
-                  <div className="absolute -top-3.5 left-6 bg-black text-white px-3.5 py-1 text-[10px] font-bold tracking-widest uppercase rounded-none">
-                    Recomendado
+                {featured && (
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                    <span className="whitespace-nowrap bg-oro px-4 py-1.5 font-label text-[10px] font-bold uppercase tracking-[0.16em] text-ciruela shadow-sm">
+                      El más solicitado
+                    </span>
                   </div>
                 )}
 
-                {/* Plan Metadata */}
-                <div>
-                  <div className="flex justify-between items-start mb-6">
-                    <div>
-                      <h3 className="text-xl font-serif font-light tracking-tight uppercase text-zinc-950">
-                        {plan.name}
-                      </h3>
-                      <p className="text-xs text-zinc-550 mt-1.5 font-sans font-light leading-relaxed min-h-[40px]">
-                        {plan.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Pricing tag */}
-                  <div className="border-b border-neutral-200 pb-6 mb-6">
-                    <span className="text-4xl font-serif font-light tracking-tight text-neutral-950">
-                      {formatPrice(plan.price, plan.currency)}
-                    </span>
-                    <span className="text-zinc-500 text-xs font-light font-sans ml-1.5">
-                      {plan.duration}
-                    </span>
-                  </div>
-
-                  {/* Features listing checkmarks */}
-                  <div className="space-y-4">
-                    <span className="text-[10px] font-mono tracking-widest text-zinc-450 uppercase block">Inclusiones claves</span>
-                    <ul className="space-y-3.5">
-                      {plan.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-start space-x-3 text-sm">
-                          <CircleCheck className="w-4 h-4 text-zinc-550 shrink-0 mt-0.5" />
-                          <span className="text-zinc-650 font-light font-sans leading-tight">
-                            {feature}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                <div className="flex items-center justify-between gap-3 border-b border-[#E4D8C4] pb-4">
+                  <span className="font-label text-[11px] font-semibold uppercase tracking-[0.22em] text-wine">
+                    Nivel 0{index + 1}
+                  </span>
+                  <span className="border border-[#D9CDB8] px-2.5 py-1 font-label text-[10px] font-semibold uppercase tracking-[0.12em] text-ciruela">
+                    {plan.duration}
+                  </span>
                 </div>
 
-                {/* Booking call message CTA */}
-                <div className="pt-8 mt-8 border-t border-neutral-200">
-                  <button
-                    onClick={() => handleSelectPlan(plan)}
-                    className={`w-full py-3.5 font-sans font-bold text-xs tracking-widest uppercase transition-all rounded-none cursor-pointer flex items-center justify-center space-x-2 ${
-                      isFeatured
-                        ? 'bg-black text-white hover:bg-zinc-800'
-                        : 'bg-neutral-100 border border-neutral-200 text-zinc-700 hover:bg-neutral-200 hover:text-black hover:border-neutral-300'
-                    }`}
-                  >
-                    <MessageSquare className="w-4 h-4 shrink-0" />
-                    <span>Contratar vía WhatsApp</span>
-                  </button>
-                  <p className="text-center text-[10px] text-zinc-450 mt-2 font-mono">
-                    Garantía de respuesta rápida • Costa Rica
+                <h3 className="mt-5 font-serif text-[1.7rem] leading-tight text-ciruela">{plan.name}</h3>
+                <p className="mt-2 text-[13.5px] leading-6 text-malva">{plan.description}</p>
+
+                <div className="mt-6 border-t border-[#E4D8C4] pt-5">
+                  <p className="font-serif text-[2.6rem] font-medium leading-none tracking-tight text-ciruela">
+                    {formatPrice(plan.price)}
                   </p>
+                  <span className="mt-2 block font-label text-[10px] uppercase tracking-[0.16em] text-malva">
+                    {currency === 'USD' && sellRate ? 'Dólares, tipo de cambio venta' : 'Colones costarricenses'}
+                  </span>
                 </div>
-              </motion.div>
+
+                <ul className="mt-6 flex-1 space-y-3 text-[13.5px] leading-5 text-ciruela">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2.5">
+                      <span className="mt-0.5 inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border border-bosque text-bosque">
+                        <Check className="h-3 w-3" strokeWidth={2.5} />
+                      </span>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <button
+                  type="button"
+                  onClick={() => handleSelectPlan(plan)}
+                  className="mt-8 inline-flex w-full cursor-pointer items-center justify-center gap-3 bg-bosque py-3.5 font-label text-[11px] font-semibold uppercase tracking-[0.18em] text-white transition-colors hover:bg-verde"
+                >
+                  {action}
+                  <span aria-hidden="true">→</span>
+                </button>
+              </article>
             );
           })}
+
+          <article className="relative flex flex-col border border-[#E7DCC8] bg-[#FBF8F3] px-7 pb-7 pt-6 text-ciruela shadow-xl">
+            <div className="flex items-center justify-between gap-3 border-b border-[#E4D8C4] pb-4">
+              <span className="font-label text-[11px] font-semibold uppercase tracking-[0.22em] text-wine">
+                Nivel 04
+              </span>
+              <span className="border border-[#D9CDB8] px-2.5 py-1 font-label text-[10px] font-semibold uppercase tracking-[0.12em] text-ciruela">
+                a medida
+              </span>
+            </div>
+
+            <h3 className="mt-5 font-serif text-[1.7rem] leading-tight text-ciruela">Personalizado</h3>
+            <p className="mt-2 text-[13.5px] leading-6 text-malva">
+              Fotografía, video o combo armados según el proyecto. Miranda prepara la proforma con lo que tu marca necesita.
+            </p>
+
+            <div className="mt-6 border-t border-[#E4D8C4] pt-5">
+              <p className="font-serif text-[2.6rem] font-medium leading-none tracking-tight text-ciruela">
+                A cotizar
+              </p>
+              <span className="mt-2 block font-label text-[10px] uppercase tracking-[0.16em] text-malva">
+                Proforma por WhatsApp
+              </span>
+            </div>
+
+            <ul className="mt-6 flex-1 space-y-3 text-[13.5px] leading-5 text-ciruela">
+              {[
+                'Fotografía, video o combo audiovisual',
+                'Duración de rodaje según el proyecto',
+                'Cantidad de fotografías editadas a convenir',
+                'Diseño gráfico para redes sociales',
+                'Optimización de perfiles de redes',
+                'Entrega de archivos RAW, si el proyecto lo pide',
+              ].map((feature) => (
+                <li key={feature} className="flex items-start gap-2.5">
+                  <span className="mt-0.5 inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border border-bosque text-bosque">
+                    <Check className="h-3 w-3" strokeWidth={2.5} />
+                  </span>
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            <button
+              type="button"
+              onClick={() => {
+                const message = encodeURIComponent(
+                  '¡Hola Miranda! Quiero armar un plan personalizado para mi proyecto. Me gustaría cotizar fotografía, video o un combo a la medida. ¡Gracias!'
+                );
+                window.open(`https://wa.me/${cleanPhone(biography.whatsapp)}?text=${message}`, '_blank');
+              }}
+              className="mt-8 inline-flex w-full cursor-pointer items-center justify-center gap-3 bg-bosque py-3.5 font-label text-[11px] font-semibold uppercase tracking-[0.18em] text-white transition-colors hover:bg-verde"
+            >
+              Solicitar proforma
+              <span aria-hidden="true">→</span>
+            </button>
+          </article>
         </div>
 
-        {/* Informative advice note */}
-        <div className="mt-12 text-center">
-          <p className="text-zinc-500 text-xs font-mono max-w-xl mx-auto leading-relaxed">
-            * Los precios mostrados están calculados para cobertura directa en Esparza y Puntarenas centro. Para otras ubicaciones en el país, se cotiza viático adicional de forma oportuna.
-          </p>
-        </div>
-
+        <p className="mx-auto mt-10 max-w-2xl text-center text-[13px] text-champagne/90">
+          Los precios cubren Esparza y Puntarenas centro. Para otras zonas del país se cotiza el viático por separado.
+        </p>
       </div>
     </section>
   );

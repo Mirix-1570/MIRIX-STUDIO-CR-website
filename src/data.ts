@@ -7,7 +7,7 @@ import { PortfolioItem, ServicePlan, ShopProduct } from './types';
 
 export const INITIAL_BIOGRAPHY = {
   name: "Miranda Méndez",
-  tagline: "Diseñadora de experiencias visuales y desarrolladora web",
+  tagline: "Diseñadora de experiencias visuales, creadora de contenido y locutora.",
   story: `Soy Miranda Méndez, una chica todo en uno con creatividad y talento para aportar en la sociedad. Cuando era pequeña creía que sabía de arquitectura, amaba el diseño de interiores y exteriores, tenía y aún tengo talento para la fotografía, y entre otras cosas más.
 
 Durante mi trayecto en el colegio, no sabía ni qué estudiar al salir, hasta que conocí a un compañero de clase en octavo en 2018 que se creía diseñador gráfico. En ese año conocí uno de los mundos más hermosos para mí, el mundo de la creatividad. Después de ahí, supe qué quería estudiar y de la mano de Dios hacia dónde caminar en la vida, y créeme, el resto es historia. Dios me ha mostrado cuál es su propósito conmigo y creo firmemente que este emprendimiento es parte de él.`,

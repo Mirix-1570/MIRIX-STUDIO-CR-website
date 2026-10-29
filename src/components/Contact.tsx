@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, Phone, MapPin, Send, CheckCircle, Clock, ArrowRight, MessageSquare, ShieldCheck } from 'lucide-react';
+import { MapPin, Mail, Phone, Clock, Send, CheckCircle, ShieldCheck } from 'lucide-react';
 import { ContactMessage } from '../types';
 
 interface ContactProps {
@@ -19,8 +19,11 @@ interface ContactProps {
   addMessage: (message: Omit<ContactMessage, 'id' | 'date' | 'read'>) => void;
 }
 
+const MAP_QUERY = 'Esparza, Puntarenas, Costa Rica';
+const MAP_EMBED = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15717.266086695985!2d-84.67767374029188!3d9.990691541826509!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa036e05f9e6025%3A0xa29124e569265597!2sProvincia%20de%20Puntarenas%2C%20Esparza!5e0!3m2!1ses-419!2scr!4v1792444395758!5m2!1ses-419!2scr';
+const MAP_LINK = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(MAP_QUERY)}`;
+
 export default function Contact({ biography, addMessage }: ContactProps) {
-  // Form State
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -47,9 +50,7 @@ export default function Contact({ biography, addMessage }: ContactProps) {
     return newErrors;
   };
 
-  const cleanPhoneStr = (phoneNum: string) => {
-    return phoneNum.replace(/[^0-9+]/g, '');
-  };
+  const cleanPhoneStr = (phoneNum: string) => phoneNum.replace(/[^0-9+]/g, '');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,24 +61,13 @@ export default function Contact({ biography, addMessage }: ContactProps) {
     }
 
     setErrors({});
-    
-    // Dispatch message payload to persistent layout
-    addMessage({
-      name,
-      email,
-      phone,
-      service,
-      message
-    });
+    addMessage({ name, email, phone, service, message });
 
-    // Fire-and-forget notifications (non-blocking; failures tolerated, e.g. local dev)
-    // 1) Email via Netlify Forms (AJAX submission; dashboard email notification)
     fetch('/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ 'form-name': 'contact', name, email, phone, service, message }).toString(),
     }).catch(() => {});
-    // 2) Telegram bot via Netlify Function (token stays server-side, never in the bundle)
     fetch('/.netlify/functions/notify-telegram', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -95,8 +85,7 @@ export default function Contact({ biography, addMessage }: ContactProps) {
       `*Mensaje:* ${message}\n\n` +
       `Te contacto desde el sitio web oficial. ¡Quedo atento rta!`
     );
-    const whatsappLink = `https://wa.me/${cleanPhoneStr(biography.whatsapp)}?text=${formattedText}`;
-    window.open(whatsappLink, '_blank');
+    window.open(`https://wa.me/${cleanPhoneStr(biography.whatsapp)}?text=${formattedText}`, '_blank');
   };
 
   const handleResetForm = () => {
@@ -108,275 +97,197 @@ export default function Contact({ biography, addMessage }: ContactProps) {
     setSubmitted(false);
   };
 
+  const fieldClass = (invalid: boolean) =>
+    `w-full rounded-lg bg-beige border ${invalid ? 'border-wine' : 'border-arena'} px-4 py-3 font-sans text-[15px] text-ciruela placeholder:text-malva/70 focus:outline-none focus:border-oro focus:bg-white`;
+
+  const cards = [
+    { icon: MapPin, label: 'Ubicación', value: biography.location, href: MAP_LINK },
+    { icon: Mail, label: 'Correo', value: biography.email, href: `mailto:${biography.email}` },
+    { icon: Phone, label: 'WhatsApp', value: biography.whatsapp, href: `https://wa.me/${cleanPhoneStr(biography.whatsapp)}` },
+    { icon: Clock, label: 'Horario', value: 'Con cita previa, por WhatsApp', href: undefined },
+  ];
+
   return (
-    <section className="bg-[#FAFAFA] text-zinc-900 py-24 px-4 sm:px-6 lg:px-8 relative">
-      <div className="max-w-7xl mx-auto">
-        
-        {/* Module Header */}
-        <div className="text-center max-w-2xl mx-auto mb-20">
-          <div className="inline-flex items-center space-x-2 text-xs font-semibold tracking-widest uppercase text-zinc-550 mb-3">
-            <Mail className="w-3.5 h-3.5" />
-            <span>MÓDULO DE CONTACTO</span>
-          </div>
-          
-          <h2 className="text-4xl font-serif font-light tracking-tight text-neutral-950 uppercase">
-            Hablemos de Tu Proyecto
-          </h2>
-          <div className="w-16 h-[1px] bg-neutral-250 mx-auto mt-4" />
+    <section id="booking" className="w-full bg-marfil px-6 py-16 lg:px-16 lg:py-20">
+      <div className="mb-10 max-w-2xl">
+        <h2 className="font-sans text-sm font-semibold uppercase tracking-[0.22em] text-ciruela">Contacto</h2>
+        <div className="mt-3 h-[3px] w-16 bg-oro" />
+      </div>
+
+      <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2">
+        <div className="relative min-h-[460px] overflow-hidden rounded-2xl border border-arena bg-beige shadow-sm lg:row-span-2 lg:min-h-[640px]">
+          <iframe
+            title="Mapa de Esparza, Puntarenas"
+            src={MAP_EMBED}
+            className="absolute inset-0 h-full w-full border-0"
+            allowFullScreen
+            loading="eager"
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
         </div>
 
-        {/* Contact main split structure */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch items-center">
-          
-          {/* Left Column: Coordinates detail details & aesthetic location plate */}
-          <div className="lg:col-span-5 flex flex-col justify-between space-y-8 h-full">
-            <div className="space-y-6">
-              <span className="text-xs font-mono text-zinc-500 uppercase tracking-widest">INFORMACIÓN DE CONTACTO</span>
-              <h3 className="text-2xl font-serif font-light tracking-tight uppercase max-w-sm text-zinc-950">
-                Diseñemos estética para tu emprendimiento
-              </h3>
-              <p className="text-zinc-650 font-sans text-xs sm:text-sm font-light leading-relaxed max-w-md">
-                ¿Tiene alguna consulta específica? Complete el formulario en unos segundos. Miranda responderá a la brevedad. Estaremos encantados de agendar reuniones virtuales o presenciales.
-              </p>
-            </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {cards.map((card) => {
+            const Icon = card.icon;
+            const body = (
+              <>
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-champagne/70 text-wine">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <span className="mt-3 block font-sans text-sm font-semibold text-ciruela">{card.label}</span>
+                <span className="mt-1 block text-[13px] leading-5 text-malva">{card.value}</span>
+              </>
+            );
+            const className = 'rounded-2xl border border-arena bg-white p-5 shadow-sm';
+            return card.href ? (
+              <a key={card.label} href={card.href} target={card.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className={className}>
+                {body}
+              </a>
+            ) : (
+              <div key={card.label} className={className}>{body}</div>
+            );
+          })}
+        </div>
 
-            {/* List entries */}
-            <div className="space-y-4 pt-4">
-              {/* WhatsApp phone */}
-              <div className="flex items-center space-x-4 bg-white p-4 border border-neutral-200 rounded-none shadow-sm">
-                <div className="p-3 bg-neutral-100 text-zinc-800 rounded-full">
-                  <Phone className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-[9px] font-mono tracking-widest text-zinc-500 uppercase block">Llame o escriba directo</span>
-                  <span className="text-sm font-semibold tracking-wide text-zinc-800">{biography.whatsapp}</span>
-                </div>
-              </div>
-
-              {/* Email address */}
-              <div className="flex items-center space-x-4 bg-white p-4 border border-neutral-200 rounded-none shadow-sm">
-                <div className="p-3 bg-neutral-100 text-zinc-800 rounded-full">
-                  <Mail className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-[9px] font-mono tracking-widest text-zinc-500 uppercase block">Correo de cotizaciones</span>
-                  <span className="text-sm font-semibold tracking-wide text-zinc-800">{biography.email}</span>
-                </div>
-              </div>
-
-              {/* Physical Location */}
-              <div className="flex items-center space-x-4 bg-white p-4 border border-neutral-200 rounded-none shadow-sm">
-                <div className="p-3 bg-neutral-100 text-zinc-800 rounded-full">
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-[9px] font-mono tracking-widest text-zinc-500 uppercase block">Nuestra ubicación</span>
-                  <span className="text-sm font-semibold tracking-wide text-zinc-800">{biography.location}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Location card: base info + directions link (Google Maps) */}
-            <a
-              href="https://www.google.com/maps/search/?api=1&query=Esparza,+Puntarenas,+Costa+Rica"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Cómo llegar a Esparza, Puntarenas, Costa Rica en Google Maps"
-              className="block bg-white border border-neutral-200 p-5 rounded-none relative overflow-hidden shadow-sm transition-all hover:border-neutral-400 hover:shadow-md"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[9px] text-zinc-500 tracking-widest font-mono uppercase">COSTA RICA • PACÍFICO</span>
-                <span className="text-[8px] bg-black text-white px-2 py-0.5 rounded-none uppercase font-mono font-bold">ESPARZA BASE ↗</span>
-              </div>
-              
-              <div className="h-20 bg-[#FAFAFA] border border-neutral-200 rounded-none relative overflow-hidden flex items-center justify-center">
-                {/* Simulated minimal contour path vector lines */}
-                <div className="absolute inset-0 opacity-10 flex items-center justify-center">
-                  <div className="w-40 h-40 rounded-full border border-black" />
-                  <div className="w-60 h-60 rounded-full border border-black" />
-                  <div className="w-80 h-80 rounded-full border border-black" />
-                  <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-neutral-300" />
-                  <div className="absolute left-1/3 top-0 bottom-0 w-[1px] bg-neutral-300" />
-                </div>
-                
-                <div className="relative z-10 flex items-center space-x-2 bg-white border border-neutral-250 px-3 py-1.5 rounded-none shadow-sm">
-                  <div className="h-2 w-2 rounded-full bg-black animate-ping" />
-                  <span className="text-[9px] font-semibold tracking-widest uppercase text-zinc-800 animate-pulse">Base: Esparza · Cobertura en todo el país</span>
-                </div>
-              </div>
-            </a>
-
+        <div className="rounded-2xl border border-arena bg-white p-6 shadow-sm sm:p-8">
+          <div className="mb-6 border-l-4 border-oro pl-4">
+            <h3 className="font-serif text-2xl text-ciruela">Escribinos</h3>
+            <p className="mt-1 text-[13px] leading-5 text-malva">Miranda lee cada mensaje de forma directa.</p>
           </div>
 
-          {/* Right Column: Interactive verification form */}
-          <div className="lg:col-span-7 bg-white border border-neutral-200 p-6 sm:p-10 rounded-none shadow-sm text-zinc-900">
-            
-            <AnimatePresence mode="wait">
-              {!submitted ? (
-                <motion.form
-                  key="contact-form"
-                  name="contact"
-                  data-netlify="true"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  onSubmit={handleSubmit}
-                  className="space-y-6"
-                >
-                  <input type="hidden" name="form-name" value="contact" />
-                  <div className="flex flex-col space-y-1.5">
-                    <h4 className="text-lg font-serif font-light tracking-tight uppercase text-zinc-950">Escríbenos</h4>
-                    <p className="text-xs text-zinc-500">Miranda procesará su mensaje de forma confidencial.</p>
-                  </div>
-
-                  {/* Form fields */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Full Name */}
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-semibold tracking-widest text-zinc-500 uppercase">Su Nombre</label>
-                      <input
-                        type="text"
-                        name="name"
-                        placeholder="Ej: Sofía Quesada"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className={`w-full bg-white border ${errors.name ? 'border-red-500 focus:border-red-600' : 'border-neutral-200 focus:border-black'} focus:outline-none p-3 text-sm rounded-none text-zinc-900 placeholder-zinc-400 font-sans transition-colors`}
-                      />
-                      {errors.name && <span className="text-[10px] text-red-500 font-mono block">{errors.name}</span>}
-                    </div>
-
-                    {/* Email */}
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-semibold tracking-widest text-zinc-500 uppercase">Su Correo Electrónico</label>
-                      <input
-                        type="email"
-                        name="email"
-                        placeholder="ejemplo@correo.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className={`w-full bg-white border ${errors.email ? 'border-red-500 focus:border-red-600' : 'border-neutral-200 focus:border-black'} focus:outline-none p-3 text-sm rounded-none text-zinc-900 placeholder-zinc-400 font-sans transition-colors`}
-                      />
-                      {errors.email && <span className="text-[10px] text-red-500 font-mono block">{errors.email}</span>}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Phone WhatsApp number */}
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-semibold tracking-widest text-zinc-500 uppercase">Su Teléfono (WhatsApp)</label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        placeholder="Ej: +506 88888888"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className={`w-full bg-white border ${errors.phone ? 'border-red-500 focus:border-red-600' : 'border-neutral-200 focus:border-black'} focus:outline-none p-3 text-sm rounded-none text-zinc-900 placeholder-zinc-400 font-sans transition-colors`}
-                      />
-                      {errors.phone && <span className="text-[10px] text-red-500 font-mono block">{errors.phone}</span>}
-                    </div>
-
-                    {/* Service type select box */}
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-semibold tracking-widest text-zinc-500 uppercase">Especialidad de Interés</label>
-                      <select
-                        name="service"
-                        value={service}
-                        onChange={(e) => setService(e.target.value)}
-                        className="w-full bg-white border border-neutral-200 focus:border-black focus:outline-none p-3 text-sm rounded-none text-zinc-900 font-sans transition-colors cursor-pointer"
-                      >
-                        {servicesList.map(ser => (
-                          <option key={ser} value={ser} className="bg-white text-zinc-900">
-                            {ser}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Body Message */}
+          <AnimatePresence mode="wait">
+            {!submitted ? (
+              <motion.form
+                key="contact-form"
+                name="contact"
+                data-netlify="true"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onSubmit={handleSubmit}
+                className="space-y-4"
+              >
+                <input type="hidden" name="form-name" value="contact" />
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-semibold tracking-widest text-zinc-500 uppercase">Detalles del Proyecto</label>
-                    <textarea
-                      name="message"
-                      rows={5}
-                      placeholder="Describa brevemente la idea, locación, fecha estimada del rodaje o tipo de plataforma web que imagina..."
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      className={`w-full bg-white border ${errors.message ? 'border-red-500 focus:border-red-600' : 'border-neutral-200 focus:border-black'} focus:outline-none p-3 text-sm rounded-none text-zinc-900 placeholder-zinc-400 font-sans transition-colors resize-none`}
+                    <label className="sr-only" htmlFor="contact-name">Nombre</label>
+                    <input
+                      id="contact-name"
+                      type="text"
+                      name="name"
+                      placeholder="Tu nombre"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className={fieldClass(!!errors.name)}
                     />
-                    {errors.message && <span className="text-[10px] text-red-505 font-mono block">{errors.message}</span>}
+                    {errors.name && <span className="block text-[11px] text-wine">{errors.name}</span>}
                   </div>
+                  <div className="space-y-1.5">
+                    <label className="sr-only" htmlFor="contact-email">Correo</label>
+                    <input
+                      id="contact-email"
+                      type="email"
+                      name="email"
+                      placeholder="Tu correo"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className={fieldClass(!!errors.email)}
+                    />
+                    {errors.email && <span className="block text-[11px] text-wine">{errors.email}</span>}
+                  </div>
+                </div>
 
-                  {/* Submit buttons */}
-                  <div className="pt-4 flex flex-col sm:flex-row gap-3">
-                    <button
-                      type="submit"
-                      className="flex-1 py-4 bg-black text-white text-center font-sans font-bold text-xs tracking-widest uppercase hover:bg-zinc-800 transition-colors flex items-center justify-center space-x-2.5 rounded-none cursor-pointer shadow-sm shadow-black/5"
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <label className="sr-only" htmlFor="contact-phone">WhatsApp</label>
+                    <input
+                      id="contact-phone"
+                      type="tel"
+                      name="phone"
+                      placeholder="WhatsApp"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className={fieldClass(!!errors.phone)}
+                    />
+                    {errors.phone && <span className="block text-[11px] text-wine">{errors.phone}</span>}
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="sr-only" htmlFor="contact-service">Especialidad</label>
+                    <select
+                      id="contact-service"
+                      name="service"
+                      value={service}
+                      onChange={(e) => setService(e.target.value)}
+                      className="w-full cursor-pointer rounded-lg border border-arena bg-beige px-4 py-3 font-sans text-[15px] text-ciruela focus:border-oro focus:bg-white focus:outline-none"
                     >
-                      <Send className="w-4 h-4 shrink-0" />
-                      <span>Enviar Mensaje Oficial</span>
-                    </button>
+                      {servicesList.map((item) => (
+                        <option key={item} value={item}>{item}</option>
+                      ))}
+                    </select>
                   </div>
+                </div>
 
-                  <div className="text-zinc-500 flex items-center space-x-2 text-[10px] font-mono">
-                    <ShieldCheck className="w-3.5 h-3.5 text-zinc-600" />
-                    <span>Sus datos personales nunca serán distribuidos o vendidos.</span>
-                  </div>
-                </motion.form>
-              ) : (
-                <motion.div
-                  key="contact-success"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="space-y-8 text-center py-8"
+                <div className="space-y-1.5">
+                  <label className="sr-only" htmlFor="contact-message">Mensaje</label>
+                  <textarea
+                    id="contact-message"
+                    name="message"
+                    rows={5}
+                    placeholder="Mensaje"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className={`${fieldClass(!!errors.message)} resize-none`}
+                  />
+                  {errors.message && <span className="block text-[11px] text-wine">{errors.message}</span>}
+                </div>
+
+                <button
+                  type="submit"
+                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-bosque px-6 py-3.5 font-label text-[11px] font-semibold uppercase tracking-[0.16em] text-champagne hover:bg-verde"
                 >
-                  <div className="inline-flex p-4 bg-neutral-100 border border-neutral-200 rounded-full text-zinc-800 shadow-sm">
-                    <CheckCircle className="w-12 h-12 text-black animate-bounce" />
-                  </div>
-
-                  <div className="space-y-2">
-                    <h3 className="text-2xl font-serif font-light tracking-tight uppercase text-zinc-950">¡Mensaje Enviado con Éxito!</h3>
-                    <p className="text-sm text-zinc-650 font-sans font-light max-w-md mx-auto">
-                      Gracias {name}, su solicitud ha sido resguardada en el buzón local de Mirix Studio CR de forma satisfactoria.
-                    </p>
-                  </div>
-
-                  <div className="bg-[#FAFAFA] border border-neutral-250 p-6 rounded-none text-center max-w-md mx-auto space-y-4 shadow-sm">
-                    <div className="flex items-center justify-center space-x-2 text-xs font-mono text-zinc-500">
-                      <Clock className="w-4 h-4 text-black" />
-                      <span>¿Quieres agilizar la respuesta al instante?</span>
-                    </div>
-
-                    <p className="text-xs text-zinc-550 font-sans font-light">
-                      Puede enviar los datos rellenados directamente a Miranda por WhatsApp para asegurar una respuesta exprés hoy mismo.
-                    </p>
-
-                    <button
-                      onClick={handleSendWhatsAppBackup}
-                      className="w-full py-3.5 bg-neutral-100 border border-neutral-200 hover:bg-neutral-200 hover:text-black text-zinc-800 text-[10px] font-bold tracking-widest uppercase transition-all rounded-none flex items-center justify-center space-x-2.5 cursor-pointer"
-                    >
-                      <MessageSquare className="w-4 h-4 text-zinc-700" />
-                      <span>Comenzar Chat de Whatsapp</span>
-                    </button>
-                  </div>
-
-                  <div className="pt-4">
-                    <button
-                      onClick={handleResetForm}
-                      className="text-xs font-semibold tracking-wider uppercase text-zinc-500 hover:text-black hover:underline transition-colors"
-                    >
-                      Enviar otra consulta
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-          </div>
-
+                  <Send className="h-4 w-4" />
+                  Enviar mensaje
+                </button>
+                <p className="flex items-center gap-2 text-[12px] text-malva">
+                  <ShieldCheck className="h-3.5 w-3.5 text-bosque" />
+                  Los datos no se comparten ni se venden.
+                </p>
+              </motion.form>
+            ) : (
+              <motion.div
+                key="contact-success"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                className="space-y-6 py-4 text-center"
+              >
+                <div className="inline-flex bg-bosque p-4 text-champagne">
+                  <CheckCircle className="h-10 w-10" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-serif text-3xl text-ciruela">Mensaje recibido</h3>
+                  <p className="mx-auto max-w-md text-sm text-malva">
+                    Gracias {name}. El mensaje quedó en el buzón de Mirix Studio CR.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleSendWhatsAppBackup}
+                  className="w-full cursor-pointer bg-oro py-3.5 font-label text-[10px] font-bold uppercase tracking-[0.16em] text-ciruela"
+                >
+                  Escribir por WhatsApp
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResetForm}
+                  className="cursor-pointer font-label text-[10px] uppercase tracking-[0.16em] text-wine"
+                >
+                  Enviar otra consulta
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-
       </div>
     </section>
   );
