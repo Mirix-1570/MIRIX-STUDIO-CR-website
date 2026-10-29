@@ -112,9 +112,6 @@ export default function Contact({ biography, addMessage }: ContactProps) {
       <div className="mb-10 max-w-2xl">
         <h2 className="font-sans text-sm font-semibold uppercase tracking-[0.22em] text-ciruela">Contacto</h2>
         <div className="mt-3 h-[3px] w-16 bg-oro" />
-        <p className="mt-4 font-sans text-[15px] leading-7 text-malva">
-          Las consultas las revisa Miranda directamente. Base en Esparza, con cobertura en todo Costa Rica.
-        </p>
       </div>
 
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2">

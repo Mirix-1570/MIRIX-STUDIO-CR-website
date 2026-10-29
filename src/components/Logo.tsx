@@ -8,18 +8,18 @@ import React from 'react';
 interface LogoProps {
   height?: number;
   className?: string;
+  src?: string;
 }
 
-export default function Logo({ height = 64, className = '' }: LogoProps) {
+export default function Logo({ height = 64, className = '', src = '/logo/logo-mark.png' }: LogoProps) {
   return (
     <img
-      src="/logo/logo-mark.jpg"
+      src={src}
       alt="Mirix Studio CR"
       height={height}
-      fetchPriority="high"
       decoding="async"
-      className={`w-auto mix-blend-multiply select-none ${className}`}
-      style={{ height }}
+      className={`block w-auto max-w-none shrink-0 select-none ${className}`}
+      style={{ height, minHeight: height }}
     />
   );
 }

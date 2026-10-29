@@ -122,7 +122,7 @@ export default function Pricing({ plans, biography }: PricingProps) {
           )}
         </div>
 
-        <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-3 lg:gap-5">
+        <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-2 xl:grid-cols-4 xl:gap-5">
           {plans.map((plan, index) => {
             const featured = index === 1;
             const action = ACTIONS[index] ?? 'Elegir este plan';
@@ -185,6 +185,63 @@ export default function Pricing({ plans, biography }: PricingProps) {
               </article>
             );
           })}
+
+          <article className="relative flex flex-col border border-[#E7DCC8] bg-[#FBF8F3] px-7 pb-7 pt-6 text-ciruela shadow-xl">
+            <div className="flex items-center justify-between gap-3 border-b border-[#E4D8C4] pb-4">
+              <span className="font-label text-[11px] font-semibold uppercase tracking-[0.22em] text-wine">
+                Nivel 04
+              </span>
+              <span className="border border-[#D9CDB8] px-2.5 py-1 font-label text-[10px] font-semibold uppercase tracking-[0.12em] text-ciruela">
+                a medida
+              </span>
+            </div>
+
+            <h3 className="mt-5 font-serif text-[1.7rem] leading-tight text-ciruela">Personalizado</h3>
+            <p className="mt-2 text-[13.5px] leading-6 text-malva">
+              Fotografía, video o combo armados según el proyecto. Miranda prepara la proforma con lo que tu marca necesita.
+            </p>
+
+            <div className="mt-6 border-t border-[#E4D8C4] pt-5">
+              <p className="font-serif text-[2.6rem] font-medium leading-none tracking-tight text-ciruela">
+                A cotizar
+              </p>
+              <span className="mt-2 block font-label text-[10px] uppercase tracking-[0.16em] text-malva">
+                Proforma por WhatsApp
+              </span>
+            </div>
+
+            <ul className="mt-6 flex-1 space-y-3 text-[13.5px] leading-5 text-ciruela">
+              {[
+                'Fotografía, video o combo audiovisual',
+                'Duración de rodaje según el proyecto',
+                'Cantidad de fotografías editadas a convenir',
+                'Diseño gráfico para redes sociales',
+                'Optimización de perfiles de redes',
+                'Entrega de archivos RAW, si el proyecto lo pide',
+              ].map((feature) => (
+                <li key={feature} className="flex items-start gap-2.5">
+                  <span className="mt-0.5 inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border border-bosque text-bosque">
+                    <Check className="h-3 w-3" strokeWidth={2.5} />
+                  </span>
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            <button
+              type="button"
+              onClick={() => {
+                const message = encodeURIComponent(
+                  '¡Hola Miranda! Quiero armar un plan personalizado para mi proyecto. Me gustaría cotizar fotografía, video o un combo a la medida. ¡Gracias!'
+                );
+                window.open(`https://wa.me/${cleanPhone(biography.whatsapp)}?text=${message}`, '_blank');
+              }}
+              className="mt-8 inline-flex w-full cursor-pointer items-center justify-center gap-3 bg-bosque py-3.5 font-label text-[11px] font-semibold uppercase tracking-[0.18em] text-white transition-colors hover:bg-verde"
+            >
+              Solicitar proforma
+              <span aria-hidden="true">→</span>
+            </button>
+          </article>
         </div>
 
         <p className="mx-auto mt-10 max-w-2xl text-center text-[13px] text-champagne/90">

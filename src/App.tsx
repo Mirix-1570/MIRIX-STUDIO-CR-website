@@ -13,7 +13,6 @@ import Legal from './components/Legal';
 import About from './components/About';
 import Portfolio from './components/Portfolio';
 import Pricing from './components/Pricing';
-import Configurator from './components/Configurator';
 import Contact from './components/Contact';
 const AdminPanel = lazy(() => import('./components/AdminPanel'));
 import {
@@ -262,7 +261,7 @@ export default function App() {
         onNavigate={navigate}
       />
 
-      <main className="flex-grow pt-20">
+      <main className="flex-grow pt-32">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentTab === 'home' ? 'home' : currentTab}
@@ -275,16 +274,11 @@ export default function App() {
               <Legal kind={currentTab} email={biography.email} location={biography.location} />
             ) : currentTab !== 'admin' ? (
               <>
-                <Hero
-                  onNavigate={navigate}
-                  portfolioCount={portfolioItems.length}
-                  location={biography.location}
-                />
+                <Hero onNavigate={navigate} />
                 <About biography={biography} />
                 <Inspiration />
                 <Portfolio portfolioItems={portfolioItems} setCurrentTab={navigate} />
                 <Pricing plans={plans} biography={biography} />
-                <Configurator biography={biography} />
                 <Contact biography={biography} addMessage={handleAddMessage} />
               </>
             ) : (
@@ -314,8 +308,8 @@ export default function App() {
         <div className="w-full px-6 lg:px-16 pt-16 pb-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 mb-12">
             <div className="lg:col-span-5 space-y-4">
-              <span className="inline-flex bg-marfil px-4 py-3">
-                <Logo height={84} />
+              <span className="inline-flex bg-white px-6 py-5">
+                <Logo height={156} />
               </span>
               <p className="font-label text-[10px] uppercase tracking-[0.22em] text-mint font-semibold">
                 Alma costarricense. Oficio editorial.

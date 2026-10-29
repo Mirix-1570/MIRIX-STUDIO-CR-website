@@ -4,12 +4,9 @@
  */
 
 import React from 'react';
-import { BadgeCheck } from 'lucide-react';
 
 interface HeroProps {
   onNavigate: (target: string) => void;
-  portfolioCount: number;
-  location: string;
 }
 
 function BotanicalField() {
@@ -29,7 +26,7 @@ function BotanicalField() {
   );
 }
 
-export default function Hero({ onNavigate, portfolioCount, location }: HeroProps) {
+export default function Hero({ onNavigate }: HeroProps) {
   return (
     <section id="home" className="relative w-full overflow-hidden bg-vino text-white">
       <img
@@ -51,20 +48,7 @@ export default function Hero({ onNavigate, portfolioCount, location }: HeroProps
       </div>
 
       <div className="relative z-10 w-full px-6 lg:px-16 py-12 lg:py-16">
-        <div className="mb-8 inline-flex items-center gap-2 bg-bosque/90 border border-[#2D5A46] px-3.5 py-1.5">
-          <span className="inline-block w-2 h-2 rounded-full bg-oro-calido" />
-          <span className="font-label text-[10px] tracking-[0.22em] text-mint uppercase font-semibold">
-            Esparza, Puntarenas · Costa Rica
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
-          <div className="lg:col-span-6 space-y-5">
-            <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-bosque border border-[#2D5A46]">
-              <span className="font-label text-[10px] uppercase tracking-[0.22em] text-champagne font-semibold">
-                Identidad · Cine · Fotografía
-              </span>
-            </div>
+        <div className="max-w-3xl space-y-5">
             <h1 className="font-serif text-[40px] leading-[1.05] lg:text-[72px] lg:leading-[80px] tracking-tight text-white">
               El arte de la
               <br />
@@ -87,44 +71,6 @@ export default function Hero({ onNavigate, portfolioCount, location }: HeroProps
                 Ver obras seleccionadas
               </button>
             </div>
-          </div>
-
-          <div className="lg:col-span-4 lg:col-start-9 w-full">
-            <div className="bg-[#2A0816]/95 border border-oro/50 p-5 space-y-4 shadow-2xl relative">
-              <div className="flex items-start justify-between border-b border-oro/20 pb-3 gap-3">
-                <div>
-                  <span className="font-label text-[10px] uppercase tracking-[0.22em] text-oro-calido font-semibold block">
-                    Monograma MS
-                  </span>
-                  <span className="font-serif text-2xl text-white">Índice editorial</span>
-                </div>
-                <span className="font-label text-[10px] px-2.5 py-1 bg-wine border border-oro/50 text-champagne font-semibold uppercase shrink-0">
-                  Costa Rica
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="p-3 bg-borgona/60 border border-oro/20">
-                  <span className="font-serif text-4xl text-champagne block leading-none">{portfolioCount}</span>
-                  <span className="font-label text-[10px] uppercase tracking-[0.16em] text-[#FFD9E4] mt-2 block">
-                    Obras en portafolio
-                  </span>
-                </div>
-                <div className="p-3 bg-borgona/60 border border-oro/20">
-                  <span className="font-serif text-4xl text-champagne block leading-none">CR</span>
-                  <span className="font-label text-[10px] uppercase tracking-[0.16em] text-[#FFD9E4] mt-2 block">
-                    Cobertura nacional
-                  </span>
-                </div>
-              </div>
-              <div className="p-3 bg-bosque/90 border border-[#2D5A46] space-y-1">
-                <span className="font-label text-[10px] uppercase tracking-[0.18em] text-champagne flex items-center gap-1.5 font-semibold">
-                  <BadgeCheck className="w-3.5 h-3.5 text-oro-calido" />
-                  Sede creativa
-                </span>
-                <p className="text-[13px] leading-5 text-mint">{location}</p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

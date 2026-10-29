@@ -12,22 +12,42 @@ Leer el contenido público (biografía, planes, portafolio) es abierto a propós
 
 La configuración web de Firebase (`VITE_FIREBASE_*`) viaja en el JavaScript del navegador. Eso es normal en Firebase. La protección está en las reglas y en Authentication, no en esconder la API key.
 
+### Credenciales del panel
+
+| Dato | Dónde vive | ¿Público? |
+|---|---|---|
+| Correo del administrador | Firebase Auth (cuenta `mirixstudiocr@gmail.com`) | No |
+| Clave del proyecto de Firebase | `.env` local, valores `VITE_*` | Sí, por la naturaleza de Firebase. Solo para inicializar la SDK. |
+| Dominio y proyecto de Firebase | `.env` local | Sí, por la naturaleza de Firebase |
+| Correo de contacto | `src/data.ts` (biografía y contacto) | Sí, es público por diseño |
+
 ## Mensajes de contacto
 
 Cualquier visitante puede crear un mensaje. Las reglas exigen los campos de texto del formulario y un visitante no puede listar, editar ni borrar el buzón.
 
 El mismo envío avisa por Telegram mediante `netlify/functions/notify-telegram.mjs`. Esa función solo acepta POST, recorta el largo de cada campo y no publica el token. `TELEGRAM_BOT_TOKEN` y `TELEGRAM_CHAT_ID` viven en las variables de Netlify, nunca en variables `VITE_*`.
 
-Riesgo que sigue abierto: no hay límite de intentos ni captcha. Alguien puede llenar el buzón y disparar avisos de Telegram. Contención actual: campos con tope de caracteres, y Telegram responde 503 si las variables no están configuradas.
+El formulario también se registra en Netlify Forms. La carga se envía al servidor de Netlify y además se guarda en Firestore, para que el administrador pueda revisarla en el panel.
+
+### Medidas de contención actuales
+
+- Campos recortados: nombre 100 caracteres, email 200, teléfono 60, servicio 100, mensaje 2000.
+- Los caracteres especiales del mensaje se escapan para evitar que se rompa el Markdown de Telegram.
+- La función solo acepta `POST`. Otros métodos devuelven 405.
+- Si faltan las variables de Telegram o falla la API, la función responde 503/502 en lugar de pegarse en el formulario.
+
+### Riesgo que sigue abierto
+
+No hay límite de intentos ni captcha. Alguien puede llenar el buzón y disparar avisos de Telegram. Contención actual: campos con tope de caracteres y Telegram responde 503 si las variables no están configuradas.
 
 ## Secretos
 
 | Dato | Dónde va |
 |---|---|
-| API key, dominio y proyecto de Firebase | `.env` local, valores `VITE_*`. Son públicos en el bundle |
-| Correo del administrador | `.env` y, como comprobación definitiva, `firestore.rules` |
+| API key, dominio y proyecto de Firebase | `.env` local, valores `VITE_*`. Son públicos en el bundle. |
+| Correo del administrador | Firebase Auth + `firestore.rules` + `src/data.ts` |
 | Token y chat de Telegram | Solo variables de Netlify |
-| `GEMINI_API_KEY` | No la usa el sitio público. No hace falta en el deploy de Netlify |
+| `GEMINI_API_KEY` | No la usa el sitio público. No hace falta en el deploy de Netlify. |
 
 `.env` no debe subirse al repositorio. `.env.example` solo trae marcadores.
 

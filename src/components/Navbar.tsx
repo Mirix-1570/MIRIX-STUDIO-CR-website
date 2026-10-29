@@ -52,15 +52,19 @@ export default function Navbar({
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 bg-[#FBF9F5]/95 backdrop-blur-md border-b border-oro/30 shadow-[0_2px_12px_rgba(59,13,35,0.08)]">
-      <div className="h-20 w-full px-6 lg:px-16 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4 min-w-0">
-          <button onClick={() => go('home')} className="shrink-0 cursor-pointer" aria-label="Ir al inicio">
-            <Logo height={58} />
-          </button>
-          <span className="hidden sm:inline-flex items-center font-label text-[10px] uppercase tracking-[0.22em] text-mint bg-bosque border border-[#2D5A46] font-semibold px-2.5 py-1">
-            Esparza — CR
+      <div className="h-32 w-full px-6 lg:px-16 flex items-center justify-between gap-6">
+        <button
+          onClick={() => go('home')}
+          className="flex shrink-0 cursor-pointer items-center gap-4"
+          aria-label="Ir al inicio"
+        >
+          <span className="inline-flex shrink-0 bg-white px-3 py-2">
+            <Logo src="/logo/logo-mark.png" height={84} className="shrink-0" />
           </span>
-        </div>
+          <span className="font-serif text-2xl leading-none tracking-tight text-ciruela sm:text-3xl">
+            Mirix Studio
+          </span>
+        </button>
 
         <nav className="hidden lg:flex flex-1 items-center justify-center gap-1">
           {NAV.map((item) => {
@@ -69,7 +73,7 @@ export default function Navbar({
               <button
                 key={item.id}
                 onClick={() => go(item.id)}
-                className={`px-3 xl:px-4 py-2 rounded-sm font-sans text-[11px] xl:text-xs font-semibold tracking-[0.16em] uppercase cursor-pointer transition-colors ${
+                className={`px-3 xl:px-5 py-2.5 rounded-sm font-sans text-sm font-semibold tracking-[0.14em] uppercase cursor-pointer transition-colors ${
                   active ? 'bg-neutral-100 text-zinc-800' : 'text-zinc-500 hover:text-zinc-800'
                 }`}
               >
