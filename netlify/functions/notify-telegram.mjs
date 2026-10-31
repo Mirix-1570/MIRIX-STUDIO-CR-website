@@ -34,7 +34,7 @@ export default async (req) => {
   const message = String(body.message || '').slice(0, 2000);
 
   // Escape Markdown special characters so arbitrary user text can't break parsing
-  const esc = (s) => s.replace(/([_*\[\]()~`>#+\-=|{}.!])/g, '\\$1');
+  const esc = (s) => s.replace(/\\/g, '\\\\').replace(/([_*\[\]()~`>#+\-=|{}.!])/g, '\\$1');
 
   const text =
     `🔔 NUEVO MENSAJE — mirixstudio.cr\n\n` +
